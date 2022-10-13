@@ -18,7 +18,7 @@ example:
 
 This will update the json file with the novel with the last chapter read set as 1. 
 
-#### --update : Updating/Adding link to json file with chapter number
+#### --link : Updating/Adding link to json file with chapter number
 
 Another example is updating using chapter number :
 
