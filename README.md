@@ -39,4 +39,4 @@ For example, if mine was at the Desktop and my username was Alex, then that woul
 
 ### Checking
 
-![Checking screenshot](images_for_book_updater/Checking_example.png)
+![Checking screenshot](images_for_book_updater/checkingprocess.png)
