@@ -28,7 +28,7 @@ example:
 
 ### How to use
 
-![change this command](images_for_book_updater/changethiscommand.png)
+![change this command](images_for_book_updater/changethiscommand12.png)
 
 - Change the {yourUserName} with something like Paul or whatever your Username is.
 - Change {yourFolder} with the folder containing the file. 
