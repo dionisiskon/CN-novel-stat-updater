@@ -1,6 +1,6 @@
-# 69shu.com-book-updater
+# CN-novel-stat-updater
 
-The python programs helps keeping stats of your favorite novels from a chinese website called 69shu.com. 
+The python programs helps keeping stats of your favorite novels from a chinese website called 69shu.com and comrademao.com. 
 
 ## Usage
 
