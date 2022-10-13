@@ -28,12 +28,14 @@ example:
 
 ### How to use
 
-![change this command](images_for_book_updater/changethiscommand12.png)
+![change this command](images_for_book_updater/changethis.png)
+
+### Do it twice for line 32 and 70!!!
 
 - Change the {yourUserName} with something like Paul or whatever your Username is.
 - Change {yourFolder} with the folder containing the file. 
 
-For example, if mine was at the Desktop and my username was Alex, then that would make the command r'\Users\Alex\Desktop\69shunovels.json'
+For example, if mine was at the Desktop and my username was Alex, then that would make the command r'\Users\Alex\Desktop\cnnovels.json'
 
 ## Screenshots
 
