@@ -11,20 +11,20 @@ The python programs helps keeping stats of your favorite novels from a chinese w
 example:
   python3 python_chinese_books_updater.py --check y
   
-#### --update : Updating json file without chapter number
+#### --link : Updating/Adding link to json file without chapter number
 
 example:
-  python3 python_chinese_books_updater.py --update https://www.69shu.com/txt/42794.htm 
+  python3 python_chinese_books_updater.py --link https://www.69shu.com/txt/42794.htm 
 
 This will update the json file with the novel with the last chapter read set as 1. 
 
-#### --update : Updating json file with chapter number
+#### --update : Updating/Adding link to json file with chapter number
 
 Another example is updating using chapter number :
 
 example:
 
-  python3 python_chinese_books_updater.py --update https://www.69shu.com/txt/42794.htm --chapter 300
+  python3 python_chinese_books_updater.py --link https://www.69shu.com/txt/42794.htm --chapter 300
 
 ### How to use
 
