@@ -2,6 +2,14 @@
 
 The python programs helps in keeping stats of your favorite novels from a chinese website called 69shu.com and comrademao.com. I made it because I filled my bookmarks and I can't always open 50 pages. :joy:
 
+## Prerequisites
+
+- rich console (pip install rich)
+- requests (pip install requests)
+- BeautifulSoup4 (pip install beautifulsoup4)
+- GoogleTrans (pip install googletrans==3.1.0a0)
+
+Of course, python3 is needed. The forementioned packages can be installed using 'python3 -m pip install ...' or 'pip3 install ...' 
 ## Usage
 
 ### Arguments
@@ -42,3 +50,15 @@ For example, if mine was at the Desktop and my username was Alex, then that woul
 ### Checking
 
 ![Checking screenshot](images_for_book_updater/checkingprocess.png)
+
+## Errors
+
+Google Translate has a bug where if you install with pip install googletrans it will show the error:
+  
+ > AttributeError: 'NoneType' object has no attribute 'group'
+
+If you have that error do:
+
+  $ pip uninstall googletrans
+  
+  $ pip install googletrans==3.1.0a0
