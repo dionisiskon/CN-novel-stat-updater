@@ -39,7 +39,7 @@ example:
 
 ![change this command](images_for_book_updater/changethis.png)
 
-### Do it twice for line 32 and 70!!!
+### Do it thrice for line 32, 70 and 105!!!
 
 - Change the {yourUserName} with something like Paul or whatever your Username is.
 - Change {yourFolder} with the folder containing the file. 
