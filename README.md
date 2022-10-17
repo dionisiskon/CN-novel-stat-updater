@@ -41,6 +41,12 @@ example:
 example: 
   
   > python3 python_chinese_books_updater.py --delete y
+
+#### --list: Listing all items in your novel collection/library
+
+example:
+
+  > python3 python_chinese_books_updater.py --list y
   
 ## Screenshots
 
