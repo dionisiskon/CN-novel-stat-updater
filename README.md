@@ -1,6 +1,6 @@
 # CN-novel-stat-updater
 
-This python program helps in keeping stats of your favorite novels from the chinese websites called 69shu.com and comrademao.com. I made it because I filled my bookmarks and I can't always open 50 pages. :joy:
+This python program helps in keeping stats of your favorite novels from the chinese novel websites called 69shu.com, MTLNovel.com and comrademao.com. I made it because I filled my bookmarks and I can't always open 50 pages. :joy:
 
 ## Prerequisites
 
