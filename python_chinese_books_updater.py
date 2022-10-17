@@ -23,6 +23,7 @@ parser.add_argument('--link')
 parser.add_argument('--chapter')
 parser.add_argument('--check')
 parser.add_argument('--delete')
+parser.add_argument('--list')
 args, leftovers = parser.parse_known_args()
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -64,7 +65,21 @@ if args.link is not None:
 						with open("cnnovels.json", "w") as jsonFile:
 							json.dump(data, jsonFile, indent = 2)
 				else:
-					print("It already exists!")
+					with open("cnnovels.json", 'r') as jsonFile:
+						data = json.load(jsonFile)
+					if '69shu' in data:
+						data['69shu'][args.link] = '1'			
+						with open("cnnovels.json", 'w') as jsonFile:
+							json.dump(data, jsonFile, indent = 2)
+					else:
+						with open("cnnovels.json", 'r') as jsonFile:
+							data = json.load(jsonFile)
+						dict1 = {args.link : '1'}
+						dictionary = {'69shu' : dict1}
+						data.update(dictionary)
+						console.print("Inserting new novel to your personal list")
+						with open("cnnovels.json", "w") as jsonFile:
+							json.dump(data, jsonFile, indent = 2)
 	elif 'comrademao' in args.link:
 		console.print("You have inputted a comrademao link\n", style='bold red')
 		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
@@ -102,7 +117,21 @@ if args.link is not None:
 						with open("cnnovels.json", "w") as jsonFile:
 							json.dump(data, jsonFile, indent = 2)
 				else:
-					print("It already exists!")
+					with open("cnnovels.json", 'r') as jsonFile:
+						data = json.load(jsonFile)
+					if 'ComradeMao' in data:
+						data['ComradeMao'][args.link] = '1'			
+						with open("cnnovels.json", 'w') as jsonFile:
+							json.dump(data, jsonFile, indent = 2)
+					else:
+						with open("cnnovels.json", 'r') as jsonFile:
+							data = json.load(jsonFile)
+						dict1 = {args.link : '1'}
+						dictionary = {'ComradeMao' : dict1}
+						data.update(dictionary)
+						console.print("Inserting new novel to your personal list")
+						with open("cnnovels.json", "w") as jsonFile:
+							json.dump(data, jsonFile, indent = 2)
 	else:
 		console.print("You have inputted a MTLNovel link\n", style="bold red")
 		doesExist = os.path.exists(dir_path + '\cnnovels.json')
@@ -137,7 +166,21 @@ if args.link is not None:
 					with open("cnnovels.json", "w") as jsonFile:
 						json.dump(data, jsonFile, indent = 2)
 			else:
-				print("It already exists!")
+				with open("cnnovels.json", 'r') as jsonFile:
+					data = json.load(jsonFile)
+				if 'MTLNovel' in data:
+					data['MTLNovel'][args.link] = '1'			
+					with open("cnnovels.json", 'w') as jsonFile:
+						json.dump(data, jsonFile, indent = 2)
+				else:
+					with open("cnnovels.json", 'r') as jsonFile:
+						data = json.load(jsonFile)
+					dict1 = {args.link : '1'}
+					dictionary = {'MTLNovel' : dict1}
+					data.update(dictionary)
+					console.print("Inserting new novel to your personal list")
+					with open("cnnovels.json", "w") as jsonFile:
+						json.dump(data, jsonFile, indent = 2)
 elif args.check is not None:
 	if args.check is not None:
 		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
@@ -260,4 +303,31 @@ if args.delete:
 				with open("cnnovels.json", "w") as jsonFile:
 					json.dump(data, jsonFile, indent = 2)
 				print("The process has terminated successfully")
-		
+if args.list:
+	doesExist = os.path.exists(dir_path + '\cnnovels.json')
+	if doesExist == False:
+		console.print("Your novel collection list is empty!", style='bold red')
+	else:
+		with open('cnnovels.json', 'r') as jsonFile:
+			data=json.load(jsonFile)
+		console.print('You currently have these novels in your json file:\n')
+		if '69shu' in data:
+			console.print('69shu:', style = 'bold blue')
+			for item in data['69shu']:
+				page = requests.get(item)
+				soup = BeautifulSoup(page.content, 'html.parser')
+				a = soup.find('div', class_ = "booknav2")
+				title = a.find('h1').text
+				title = translator.translate(title).text
+				console.print(' '.join(elem.capitalize() for elem in title.split()), style='bold green')
+			print('\n')
+		if 'ComradeMao' in data:
+			console.print('ComradeMao:', style = 'bold blue')
+			for item in data['ComradeMao']:
+				console.print(' '.join(elem.capitalize() for elem in item.split('novel/')[1].replace('/','').replace('-',' ').split()), style='bold green')
+			print('\n')
+		if 'MTLNovel' in data:
+			console.print('MTLNovel:', style = 'bold blue')
+			for item in data['MTLNovel']:
+				console.print(' '.join(elem.capitalize() for elem in item.split('/')[3].replace('-', ' ').split()), style='bold green')
+			print('\n')
