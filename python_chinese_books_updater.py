@@ -102,7 +102,7 @@ if args.link is not None:
 					print("It already exists!")
 	else:
 		console.print("You have inputted a MTLNovel link\n", style="bold red")
-		doesExist = os.path.exists(r'\Users\konto\Desktop\cnnovels.json')
+		doesExist = os.path.exists(r'\Users\{yourUsername}\{yourFolder}\cnnovels.json')
 		if doesExist == False:
 			if args.chapter is not None:
 				dict1 = {args.link : args.chapter}
