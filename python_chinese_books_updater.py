@@ -215,7 +215,7 @@ elif args.check is not None:
 				sleep(2)
 if args.delete:
 	choiceCounter = 1
-	console.print("Deleting process initiated...", style='bold red')
+	console.print("Deleting process initiated...", style = 'bold red')
 	doesExist = os.path.exists(dir_path + '\cnnovels.json')
 	deleteList = []
 	category = []
@@ -224,7 +224,7 @@ if args.delete:
 			data=json.load(jsonFile)
 		console.print('You currently have these novels in your json file:\n')
 		if '69shu' in data:
-			console.print('69shu:', 'bold blue')
+			console.print('69shu:', style = 'bold blue')
 			for item in data['69shu']:
 				console.print(str(choiceCounter) + ' : ' + item)
 				choiceCounter +=1
@@ -232,7 +232,7 @@ if args.delete:
 				category.append('69shu')
 			print('\n')
 		if 'ComradeMao' in data:
-			console.print('ComradeMao:', 'bold blue')
+			console.print('ComradeMao:', style = 'bold blue')
 			for item in data['ComradeMao']:
 				console.print(str(choiceCounter) + ': ' + item)
 				choiceCounter +=1
@@ -240,7 +240,7 @@ if args.delete:
 				category.append('ComradeMao')
 			print('\n')
 		if 'MTLNovel' in data:
-			console.print('MTLNovel:', 'bold blue')
+			console.print('MTLNovel:', style = 'bold blue')
 			for item in data['MTLNovel']:
 				console.print(str(choiceCounter) + ': ' + item)
 				choiceCounter +=1
