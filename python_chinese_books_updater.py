@@ -22,14 +22,17 @@ required = parser.add_argument_group('required arguments')
 parser.add_argument('--link')
 parser.add_argument('--chapter')
 parser.add_argument('--check')
+parser.add_argument('--delete')
 args, leftovers = parser.parse_known_args()
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
 if args.link is not None:
 	if '69shu' in args.link:
 		console.print("You have inputted a 69shu link\n", style='bold red')
 		page = requests.get(args.link)
 		if page.status_code == 200:
-			doesExist = os.path.exists(r'\Users\{yourUsername}\{yourFolder}\cnnovels.json')
+			doesExist = os.path.exists(dir_path + '\cnnovels.json')
 			if doesExist == False:
 				if args.chapter is not None:
 					dict1 = {args.link : args.chapter}
@@ -67,7 +70,7 @@ if args.link is not None:
 		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
 		page = requests.get(args.link, headers=headers)
 		if page.status_code == 200:
-			doesExist = os.path.exists(r'\Users\{yourUsername}\{yourFolder}\cnnovels.json')
+			doesExist = os.path.exists(dir_path + '\cnnovels.json')
 			if doesExist == False:
 				if args.chapter is not None:
 					dict1 = {args.link : args.chapter}
@@ -102,7 +105,7 @@ if args.link is not None:
 					print("It already exists!")
 	else:
 		console.print("You have inputted a MTLNovel link\n", style="bold red")
-		doesExist = os.path.exists(r'\Users\{yourUsername}\{yourFolder}\cnnovels.json')
+		doesExist = os.path.exists(dir_path + '\cnnovels.json')
 		if doesExist == False:
 			if args.chapter is not None:
 				dict1 = {args.link : args.chapter}
@@ -135,7 +138,7 @@ if args.link is not None:
 						json.dump(data, jsonFile, indent = 2)
 			else:
 				print("It already exists!")
-else:
+elif args.check is not None:
 	if args.check is not None:
 		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
 		with open("cnnovels.json", 'r') as jsonFile:
@@ -210,3 +213,51 @@ else:
 					console.print("Current chapter: {}\n".format(chapternum))
 					console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(len(b) - chapternum, link))
 				sleep(2)
+if args.delete:
+	choiceCounter = 1
+	console.print("Deleting process initiated...", style='bold red')
+	doesExist = os.path.exists(dir_path + '\cnnovels.json')
+	deleteList = []
+	category = []
+	if doesExist == True:
+		with open('cnnovels.json', 'r') as jsonFile:
+			data=json.load(jsonFile)
+		console.print('You currently have these novels in your json file:\n')
+		if '69shu' in data:
+			console.print('69shu:', 'bold blue')
+			for item in data['69shu']:
+				console.print(str(choiceCounter) + ' : ' + item)
+				choiceCounter +=1
+				deleteList.append(item)
+				category.append('69shu')
+			print('\n')
+		if 'ComradeMao' in data:
+			console.print('ComradeMao:', 'bold blue')
+			for item in data['ComradeMao']:
+				console.print(str(choiceCounter) + ': ' + item)
+				choiceCounter +=1
+				deleteList.append(item)
+				category.append('ComradeMao')
+			print('\n')
+		if 'MTLNovel' in data:
+			console.print('MTLNovel:', 'bold blue')
+			for item in data['MTLNovel']:
+				console.print(str(choiceCounter) + ': ' + item)
+				choiceCounter +=1
+				deleteList.append(item)
+				category.append('MTLNovel')
+			print('\n')
+		choice = int(input('Please select your choice\n'))
+		if choice != choiceCounter - 1:
+			console.print("The choice number you selected is wrong. Try again!", style="bold red")
+		else:
+			data[category[choiceCounter - 2]].pop(deleteList[choiceCounter - 2])
+			if len(data[category[choiceCounter - 2]]) == 0:
+				data.pop(category[choiceCounter - 2])
+			if len(data) == 0:
+				os.remove('cnnovels.json')
+			else:
+				with open("cnnovels.json", "w") as jsonFile:
+					json.dump(data, jsonFile, indent = 2)
+				print("The process has terminated successfully")
+		
