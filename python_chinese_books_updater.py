@@ -302,7 +302,7 @@ if args.delete:
 			else:
 				with open("cnnovels.json", "w") as jsonFile:
 					json.dump(data, jsonFile, indent = 2)
-				print("The process has terminated successfully")
+				print("The process has been terminated successfully")
 if args.list:
 	doesExist = os.path.exists(dir_path + '\cnnovels.json')
 	if doesExist == False:
