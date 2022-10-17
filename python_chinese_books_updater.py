@@ -1,6 +1,6 @@
 """
 
-Books updater for 69shu,Comrademao because I've overfilled my bookmarks!
+Books updater/Library for 69shu,Comrademao and MTLNovel because I've overfilled my bookmarks!
 
 
 """
