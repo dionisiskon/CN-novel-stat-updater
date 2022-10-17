@@ -9,6 +9,7 @@ This python program helps in keeping stats of your favorite novels from the chin
 - BeautifulSoup4 (pip install beautifulsoup4)
 - GoogleTrans (pip install googletrans==3.1.0a0)
 - Selenium for MTLNovel (pip install selenium)
+- Webdriver Manager (pip install webdriver-manager)
 
 Of course, python3 is needed. The forementioned packages can be installed using 'python3 -m pip install ...' or 'pip3 install ...' 
 ## Usage
