@@ -200,7 +200,6 @@ else:
 				else:
 					url = link + '/chapter-list/'
 				page = driver.get(url)
-				driver.save_screenshot('page.png')
 				b = driver.find_elements("xpath", "//html/body/main/article/div/div[2]/div[3]/p/a")
 				title = driver.find_element("xpath", "//html/body/main/article/div/div[2]/div[1]/h1").text
 				console.print(title, style='green')
