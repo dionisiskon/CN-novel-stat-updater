@@ -36,17 +36,12 @@ example:
 
   python3 python_chinese_books_updater.py --link https://www.69shu.com/txt/42794.htm --chapter 300
 
-### How to use
+#### --delete: Deleting from json file or erasing the whole json file if empty dictionary
 
-![change this command](images_for_book_updater/changethis.png)
-
-### Do it thrice for line 32, 70 and 105!!!
-
-- Change the {yourUserName} with something like Paul or whatever your Username is.
-- Change {yourFolder} with the folder containing the file. 
-
-For example, if mine was at the Desktop and my username was Alex, then that would make the command r'\Users\Alex\Desktop\cnnovels.json'
-
+example: 
+  
+  python3 python_chinese_books_updater.py --delete y
+  
 ## Screenshots
 
 ### Checking
