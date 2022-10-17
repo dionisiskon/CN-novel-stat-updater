@@ -19,12 +19,12 @@ Of course, python3 is needed. The forementioned packages can be installed using 
 #### --check : Checking for updates 
 
 example:
-  python3 python_chinese_books_updater.py --check y
+  > python3 python_chinese_books_updater.py --check y
   
 #### --link : Updating/Adding link to json file without chapter number
 
 example:
-  python3 python_chinese_books_updater.py --link https://www.69shu.com/txt/42794.htm 
+  > python3 python_chinese_books_updater.py --link https://www.69shu.com/txt/42794.htm 
 
 This will update the json file with the novel with the last chapter read set as 1. 
 
@@ -34,13 +34,13 @@ Another example is updating using chapter number :
 
 example:
 
-  python3 python_chinese_books_updater.py --link https://www.69shu.com/txt/42794.htm --chapter 300
+  > python3 python_chinese_books_updater.py --link https://www.69shu.com/txt/42794.htm --chapter 300
 
 #### --delete: Deleting from json file or erasing the whole json file if empty dictionary
 
 example: 
   
-  python3 python_chinese_books_updater.py --delete y
+  > python3 python_chinese_books_updater.py --delete y
   
 ## Screenshots
 
