@@ -249,7 +249,6 @@ elif args.check is not None:
 				b = driver.find_elements("xpath", "//html/body/main/article/div/div[2]/div[3]/p/a")
 				title = driver.find_element("xpath", "//html/body/main/article/div/div[2]/div[1]/h1").text
 				console.print(title, style='green')
-				print(len(b))
 				if len(b) == chapternum:
 					console.print("You are on the latest chapter. Come back and check again for new updates!\n")
 				else:
