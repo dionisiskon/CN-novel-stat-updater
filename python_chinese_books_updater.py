@@ -319,15 +319,15 @@ if args.list:
 				a = soup.find('div', class_ = "booknav2")
 				title = a.find('h1').text
 				title = translator.translate(title).text
-				console.print(' '.join(elem.capitalize() for elem in title.split()), style='bold green')
+				console.print(' '.join(elem.capitalize() for elem in title.split()) + ' ' + item, style='bold green')
 			print('\n')
 		if 'ComradeMao' in data:
 			console.print('ComradeMao:', style = 'bold blue')
 			for item in data['ComradeMao']:
-				console.print(' '.join(elem.capitalize() for elem in item.split('novel/')[1].replace('/','').replace('-',' ').split()), style='bold green')
+				console.print(' '.join(elem.capitalize() for elem in item.split('novel/')[1].replace('/','').replace('-',' ').split()) + ' ' + item, style='bold green')
 			print('\n')
 		if 'MTLNovel' in data:
 			console.print('MTLNovel:', style = 'bold blue')
 			for item in data['MTLNovel']:
-				console.print(' '.join(elem.capitalize() for elem in item.split('/')[3].replace('-', ' ').split()), style='bold green')
+				console.print(' '.join(elem.capitalize() for elem in item.split('/')[3].replace('-', ' ').split()) + ' ' + item, style='bold green')
 			print('\n')
