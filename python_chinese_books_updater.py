@@ -182,79 +182,78 @@ if args.link is not None:
 					with open("cnnovels.json", "w") as jsonFile:
 						json.dump(data, jsonFile, indent = 2)
 elif args.check is not None:
-	if args.check is not None:
-		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
-		with open("cnnovels.json", 'r') as jsonFile:
-			data = json.load(jsonFile)
-		if '69shu' in data:
-			for link in data['69shu']:
-				chapternum = int(data['69shu'][link])
-				url = link.replace("/txt",'').replace('.htm','/')
-				page = requests.get(url)
-				if page.status_code == 200:
-					soup = BeautifulSoup(page.content, 'html.parser')
-					a = soup.find('div', class_ = 'mybox')
-					b = a.find_all("div")
-					c = b[-1].find('ul')
-					d = c.find_all('li')
-					h3 = a.find('h3')
-					div_h3 = h3.find('div', class_='bread')
-					a_bread = div_h3.find_all('a')
-					title = translator.translate(a_bread[2].text)
-					title = title.text
-					console.print(title, style='green')
-					if len(d) == chapternum:
-						console.print("You are on the latest chapter. Come back and check again for new updates!\n")
-					else:
-						console.print("Current chapter: {}\n".format(chapternum))
-						console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(len(d) - chapternum, link))
-					sleep(2)
-		if 'ComradeMao' in data:
-			for link in data['ComradeMao']:
-				chapternum = int(data['ComradeMao'][link])
-				page = requests.get(link, headers=headers)
-				if page.status_code == 200:
-					soup = BeautifulSoup(page.content, 'html.parser')
-					a = soup.find('div', class_ = 'eplister')
-					b = a.find("ul")
-					c = b.find_all('li')
-					div = soup.find('div', class_ = 'infox')
-					h1 = div.find('h1')
-					title = h1.text
-					console.print(title, style='green')
-					if len(c) == chapternum:
-						console.print("You are on the latest chapter. Come back and check again for new updates!\n")
-					else:
-						console.print("Current chapter: {}\n".format(chapternum))
-						console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(len(c) - chapternum, link))
-				sleep(2)
-		if 'MTLNovel' in data:
-			from selenium import webdriver
-			from webdriver_manager.chrome import ChromeDriverManager
-			from selenium.webdriver.chrome.service import Service
-			# MTTNovel Selenium
-			options = webdriver.ChromeOptions()
-			options.add_experimental_option('excludeSwitches', ['enable-logging'])
-			options.add_argument('window-size=1920x1080')
-			options.add_argument("--headless")
-			options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 OPR/91.0.4516.72")
-			driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-			for link in data['MTLNovel']:
-				chapternum = int(data['MTLNovel'][link])
-				if link.endswith('/'):
-					url = link + 'chapter-list/'
-				else:
-					url = link + '/chapter-list/'
-				page = driver.get(url)
-				b = driver.find_elements("xpath", "//html/body/main/article/div/div[2]/div[3]/p/a")
-				title = driver.find_element("xpath", "//html/body/main/article/div/div[2]/div[1]/h1").text
+	headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+	with open("cnnovels.json", 'r') as jsonFile:
+		data = json.load(jsonFile)
+	if '69shu' in data:
+		for link in data['69shu']:
+			chapternum = int(data['69shu'][link])
+			url = link.replace("/txt",'').replace('.htm','/')
+			page = requests.get(url)
+			if page.status_code == 200:
+				soup = BeautifulSoup(page.content, 'html.parser')
+				a = soup.find('div', class_ = 'mybox')
+				b = a.find_all("div")
+				c = b[-1].find('ul')
+				d = c.find_all('li')
+				h3 = a.find('h3')
+				div_h3 = h3.find('div', class_='bread')
+				a_bread = div_h3.find_all('a')
+				title = translator.translate(a_bread[2].text)
+				title = title.text
 				console.print(title, style='green')
-				if len(b) == chapternum:
+				if len(d) == chapternum:
 					console.print("You are on the latest chapter. Come back and check again for new updates!\n")
 				else:
 					console.print("Current chapter: {}\n".format(chapternum))
-					console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(len(b) - chapternum, link))
+					console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(len(d) - chapternum, link))
 				sleep(2)
+	if 'ComradeMao' in data:
+		for link in data['ComradeMao']:
+			chapternum = int(data['ComradeMao'][link])
+			page = requests.get(link, headers=headers)
+			if page.status_code == 200:
+				soup = BeautifulSoup(page.content, 'html.parser')
+				a = soup.find('div', class_ = 'eplister')
+				b = a.find("ul")
+				c = b.find_all('li')
+				div = soup.find('div', class_ = 'infox')
+				h1 = div.find('h1')
+				title = h1.text
+				console.print(title, style='green')
+				if len(c) == chapternum:
+					console.print("You are on the latest chapter. Come back and check again for new updates!\n")
+				else:
+					console.print("Current chapter: {}\n".format(chapternum))
+					console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(len(c) - chapternum, link))
+			sleep(2)
+	if 'MTLNovel' in data:
+		from selenium import webdriver
+		from webdriver_manager.chrome import ChromeDriverManager
+		from selenium.webdriver.chrome.service import Service
+		# MTTNovel Selenium
+		options = webdriver.ChromeOptions()
+		options.add_experimental_option('excludeSwitches', ['enable-logging'])
+		options.add_argument('window-size=1920x1080')
+		options.add_argument("--headless")
+		options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 OPR/91.0.4516.72")
+		driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+		for link in data['MTLNovel']:
+			chapternum = int(data['MTLNovel'][link])
+			if link.endswith('/'):
+				url = link + 'chapter-list/'
+			else:
+				url = link + '/chapter-list/'
+			page = driver.get(url)
+			b = driver.find_elements("xpath", "//html/body/main/article/div/div[2]/div[3]/p/a")
+			title = driver.find_element("xpath", "//html/body/main/article/div/div[2]/div[1]/h1").text
+			console.print(title, style='green')
+			if len(b) == chapternum:
+				console.print("You are on the latest chapter. Come back and check again for new updates!\n")
+			else:
+				console.print("Current chapter: {}\n".format(chapternum))
+				console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(len(b) - chapternum, link))
+			sleep(2)
 if args.delete:
 	choiceCounter = 1
 	console.print("Deleting process initiated...", style = 'bold red')
