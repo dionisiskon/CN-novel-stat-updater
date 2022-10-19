@@ -16,7 +16,7 @@ Of course, python3 is needed. The forementioned packages can be installed using 
 
 ### Arguments
 
-#### -h Short explanations for the arguments
+#### -h Short explanation for the arguments
 
 example:
   > python3 python_chinese_books_updater.py -h 
