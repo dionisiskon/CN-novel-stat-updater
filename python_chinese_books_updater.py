@@ -237,8 +237,8 @@ elif args.check is not None:
 		options.add_argument('window-size=1920x1080')
 		options.add_argument("--headless")
 		options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 OPR/91.0.4516.72")
-		driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 		for link in data['MTLNovel']:
+			driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 			chapternum = int(data['MTLNovel'][link])
 			if link.endswith('/'):
 				url = link + 'chapter-list/'
@@ -253,7 +253,7 @@ elif args.check is not None:
 			else:
 				console.print("Current chapter: {}\n".format(chapternum))
 				console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(len(b) - chapternum, link))
-			sleep(2)
+			driver.quit()
 if args.delete:
 	choiceCounter = 1
 	console.print("Deleting process initiated...", style = 'bold red')
