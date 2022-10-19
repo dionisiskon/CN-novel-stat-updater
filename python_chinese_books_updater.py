@@ -267,7 +267,12 @@ if args.delete:
 		if '69shu' in data:
 			console.print('69shu:', style = 'bold blue')
 			for item in data['69shu']:
-				console.print(str(choiceCounter) + ' : ' + item)
+				page = requests.get(item)
+				soup = BeautifulSoup(page.content, 'html.parser')
+				booknav2 = soup.find('div', class_ = 'booknav2')
+				h1 = booknav2.find('h1').text
+				title = translator.translate(h1).text
+				console.print(str(choiceCounter) + ' : ' + title + ' ' + item)
 				choiceCounter +=1
 				deleteList.append(item)
 				category.append('69shu')
@@ -275,7 +280,7 @@ if args.delete:
 		if 'ComradeMao' in data:
 			console.print('ComradeMao:', style = 'bold blue')
 			for item in data['ComradeMao']:
-				console.print(str(choiceCounter) + ': ' + item)
+				console.print(str(choiceCounter) + ': ' + ' '.join(elem.capitalize() for elem in item.split('novel/')[1].replace('/','').replace('-',' ').split()) + ' ' + item)
 				choiceCounter +=1
 				deleteList.append(item)
 				category.append('ComradeMao')
@@ -283,7 +288,7 @@ if args.delete:
 		if 'MTLNovel' in data:
 			console.print('MTLNovel:', style = 'bold blue')
 			for item in data['MTLNovel']:
-				console.print(str(choiceCounter) + ': ' + item)
+				console.print(str(choiceCounter) + ': ' + ' '.join(elem.capitalize() for elem in item.split('/')[3].replace('-', ' ').split()) + ' ' + item)
 				choiceCounter +=1
 				deleteList.append(item)
 				category.append('MTLNovel')
