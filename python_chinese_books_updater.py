@@ -28,6 +28,52 @@ args, leftovers = parser.parse_known_args()
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
+def create(source):
+	if args.chapter is not None:
+		dict1 = {args.link : args.chapter}
+		dictionary = {source : dict1}
+		console.print("Inserting new novel to your personal list")
+		with open("cnnovels.json", "w") as jsonFile:
+			json.dump(dictionary, jsonFile, indent = 2)
+	else:
+		dict1 = {args.link : '1'}
+		dictionary = {source : dict1}
+		console.print("Inserting new novel to your personal list. Not finding chapter selection...Inputting 1 as chapter")
+		with open("cnnovels.json", 'w') as jsonFile:
+			json.dump(dictionary, jsonFile, indent = 2)
+def update(source):
+	if args.chapter is not None:
+		with open("cnnovels.json", 'r') as jsonFile:
+			data = json.load(jsonFile)
+		if source in data:
+			data[source][args.link] = args.chapter				
+			with open("cnnovels.json", 'w') as jsonFile:
+				json.dump(data, jsonFile, indent = 2)
+		else:
+			with open("cnnovels.json", 'r') as jsonFile:
+				data = json.load(jsonFile)
+			dict1 = {args.link : args.chapter}
+			dictionary = {source : dict1}
+			data.update(dictionary)
+			console.print("Inserting new novel to your personal list")
+			with open("cnnovels.json", "w") as jsonFile:
+				json.dump(data, jsonFile, indent = 2)
+	else:
+		with open("cnnovels.json", 'r') as jsonFile:
+			data = json.load(jsonFile)
+		if source in data:
+			data[source][args.link] = '1'			
+			with open("cnnovels.json", 'w') as jsonFile:
+				json.dump(data, jsonFile, indent = 2)
+		else:
+			with open("cnnovels.json", 'r') as jsonFile:
+				data = json.load(jsonFile)
+			dict1 = {args.link : '1'}
+			dictionary = {source : dict1}
+			data.update(dictionary)
+			console.print("Inserting new novel to your personal list")
+			with open("cnnovels.json", "w") as jsonFile:
+				json.dump(data, jsonFile, indent = 2)
 if args.link is not None:
 	if '69shu' in args.link:
 		console.print("You have inputted a 69shu link\n", style='bold red')
@@ -35,51 +81,9 @@ if args.link is not None:
 		if page.status_code == 200:
 			doesExist = os.path.exists(dir_path + '\cnnovels.json')
 			if doesExist == False:
-				if args.chapter is not None:
-					dict1 = {args.link : args.chapter}
-					dictionary = {'69shu' : dict1}
-					console.print("Inserting new novel to your personal list")
-					with open("cnnovels.json", "w") as jsonFile:
-						json.dump(dictionary, jsonFile, indent = 2)
-				else:
-					dict1 = {args.link : '1'}
-					dictionary = {'69shu' : dict1}
-					console.print("Inserting new novel to your personal list. Not finding chapter selection...Inputting 1 as chapter")
-					with open("cnnovels.json", 'w') as jsonFile:
-						json.dump(dictionary, jsonFile, indent = 2)
+				create('69shu')
 			else:
-				if args.chapter is not None:
-					with open("cnnovels.json", 'r') as jsonFile:
-						data = json.load(jsonFile)
-					if '69shu' in data:
-						data['69shu'][args.link] = args.chapter				
-						with open("cnnovels.json", 'w') as jsonFile:
-							json.dump(data, jsonFile, indent = 2)
-					else:
-						with open("cnnovels.json", 'r') as jsonFile:
-							data = json.load(jsonFile)
-						dict1 = {args.link : args.chapter}
-						dictionary = {'69shu' : dict1}
-						data.update(dictionary)
-						console.print("Inserting new novel to your personal list")
-						with open("cnnovels.json", "w") as jsonFile:
-							json.dump(data, jsonFile, indent = 2)
-				else:
-					with open("cnnovels.json", 'r') as jsonFile:
-						data = json.load(jsonFile)
-					if '69shu' in data:
-						data['69shu'][args.link] = '1'			
-						with open("cnnovels.json", 'w') as jsonFile:
-							json.dump(data, jsonFile, indent = 2)
-					else:
-						with open("cnnovels.json", 'r') as jsonFile:
-							data = json.load(jsonFile)
-						dict1 = {args.link : '1'}
-						dictionary = {'69shu' : dict1}
-						data.update(dictionary)
-						console.print("Inserting new novel to your personal list")
-						with open("cnnovels.json", "w") as jsonFile:
-							json.dump(data, jsonFile, indent = 2)
+				update('69shu')
 	elif 'comrademao' in args.link:
 		console.print("You have inputted a comrademao link\n", style='bold red')
 		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
@@ -87,100 +91,16 @@ if args.link is not None:
 		if page.status_code == 200:
 			doesExist = os.path.exists(dir_path + '\cnnovels.json')
 			if doesExist == False:
-				if args.chapter is not None:
-					dict1 = {args.link : args.chapter}
-					dictionary = {'ComradeMao' : dict1}
-					console.print("Inserting new novel to your personal list")
-					with open("cnnovels.json", "w") as jsonFile:
-						json.dump(dictionary, jsonFile, indent = 2)
-				else:
-					dict1 = {args.link : '1'}
-					dictionary = {'ComradeMao' : dict1}
-					console.print("Inserting new novel to your personal list. Not finding chapter selection...Inputting 1 as chapter")
-					with open("cnnovels.json", 'w') as jsonFile:
-						json.dump(dictionary, jsonFile, indent = 2)
+				create('ComradeMao')
 			else:
-				if args.chapter is not None:
-					with open("cnnovels.json", 'r') as jsonFile:
-						data = json.load(jsonFile)
-					if 'ComradeMao' in data:
-						data['ComradeMao'][args.link] = args.chapter				
-						with open("cnnovels.json", 'w') as jsonFile:
-							json.dump(data, jsonFile, indent = 2)
-					else:
-						with open("cnnovels.json", 'r') as jsonFile:
-							data = json.load(jsonFile)
-						dict1 = {args.link : args.chapter}
-						dictionary = {'ComradeMao' : dict1}
-						data.update(dictionary)
-						console.print("Inserting new novel to your personal list")
-						with open("cnnovels.json", "w") as jsonFile:
-							json.dump(data, jsonFile, indent = 2)
-				else:
-					with open("cnnovels.json", 'r') as jsonFile:
-						data = json.load(jsonFile)
-					if 'ComradeMao' in data:
-						data['ComradeMao'][args.link] = '1'			
-						with open("cnnovels.json", 'w') as jsonFile:
-							json.dump(data, jsonFile, indent = 2)
-					else:
-						with open("cnnovels.json", 'r') as jsonFile:
-							data = json.load(jsonFile)
-						dict1 = {args.link : '1'}
-						dictionary = {'ComradeMao' : dict1}
-						data.update(dictionary)
-						console.print("Inserting new novel to your personal list")
-						with open("cnnovels.json", "w") as jsonFile:
-							json.dump(data, jsonFile, indent = 2)
+				update('ComradeMao')
 	else:
 		console.print("You have inputted a MTLNovel link\n", style="bold red")
 		doesExist = os.path.exists(dir_path + '\cnnovels.json')
 		if doesExist == False:
-			if args.chapter is not None:
-				dict1 = {args.link : args.chapter}
-				dictionary = {'MTLNovel' : dict1}
-				console.print("Inserting new novel to your personal list")
-				with open("cnnovels.json", "w") as jsonFile:
-					json.dump(dictionary, jsonFile, indent = 2)
-			else:
-				dict1 = {args.link : '1'}
-				dictionary = {'MTLNovel' : dict1}
-				console.print("Inserting new novel to your personal list. Not finding chapter selection...Inputting 1 as chapter")
-				with open("cnnovels.json", 'w') as jsonFile:
-					json.dump(dictionary, jsonFile, indent = 2)
+			create('MTLNovel')
 		else:
-			if args.chapter is not None:
-				with open("cnnovels.json", 'r') as jsonFile:
-					data = json.load(jsonFile)
-				if 'MTLNovel' in data:
-					data['MTLNovel'][args.link] = args.chapter				
-					with open("cnnovels.json", 'w') as jsonFile:
-						json.dump(data, jsonFile, indent = 2)
-				else:
-					with open("cnnovels.json", 'r') as jsonFile:
-						data = json.load(jsonFile)
-					dict1 = {args.link : args.chapter}
-					dictionary = {'MTLNovel' : dict1}
-					data.update(dictionary)
-					console.print("Inserting new novel to your personal list")
-					with open("cnnovels.json", "w") as jsonFile:
-						json.dump(data, jsonFile, indent = 2)
-			else:
-				with open("cnnovels.json", 'r') as jsonFile:
-					data = json.load(jsonFile)
-				if 'MTLNovel' in data:
-					data['MTLNovel'][args.link] = '1'			
-					with open("cnnovels.json", 'w') as jsonFile:
-						json.dump(data, jsonFile, indent = 2)
-				else:
-					with open("cnnovels.json", 'r') as jsonFile:
-						data = json.load(jsonFile)
-					dict1 = {args.link : '1'}
-					dictionary = {'MTLNovel' : dict1}
-					data.update(dictionary)
-					console.print("Inserting new novel to your personal list")
-					with open("cnnovels.json", "w") as jsonFile:
-						json.dump(data, jsonFile, indent = 2)
+			update('MTLNovel')
 elif args.check is not None:
 	headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
 	with open("cnnovels.json", 'r') as jsonFile:
