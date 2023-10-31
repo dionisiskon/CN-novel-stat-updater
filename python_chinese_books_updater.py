@@ -216,7 +216,7 @@ if args.delete:
 				category.append('MTLNovel')
 			print('\n')
 		choice = int(input('Please select your choice\n'))
-		if choice != choiceCounter - 1:
+		if choice > choiceCounter:
 			console.print("The choice number you selected is wrong. Try again!", style="bold red")
 		else:
 			data[category[choiceCounter - 2]].pop(deleteList[choiceCounter - 2])
