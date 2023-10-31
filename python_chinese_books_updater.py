@@ -1,6 +1,6 @@
 """
 
-Books updater/Library for 69shu,Comrademao and MTLNovel because I've overfilled my bookmarks!
+Books updater/Library for 69shuba,Comrademao and MTLNovel because I've overfilled my bookmarks!
 
 
 """
@@ -75,15 +75,15 @@ def update(source):
 			with open("cnnovels.json", "w") as jsonFile:
 				json.dump(data, jsonFile, indent = 2)
 if args.link is not None:
-	if '69shu' in args.link:
-		console.print("You have inputted a 69shu link\n", style='bold red')
+	if '69shuba' in args.link:
+		console.print("You have inputted a 69shuba link\n", style='bold red')
 		page = requests.get(args.link)
 		if page.status_code == 200:
 			doesExist = os.path.exists(dir_path + '\cnnovels.json')
 			if doesExist == False:
-				create('69shu')
+				create('69shuba')
 			else:
-				update('69shu')
+				update('69shuba')
 	elif 'comrademao' in args.link:
 		console.print("You have inputted a comrademao link\n", style='bold red')
 		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
@@ -94,20 +94,22 @@ if args.link is not None:
 				create('ComradeMao')
 			else:
 				update('ComradeMao')
-	else:
+	elif 'mtlnovel' in args.link:
 		console.print("You have inputted a MTLNovel link\n", style="bold red")
 		doesExist = os.path.exists(dir_path + '\cnnovels.json')
 		if doesExist == False:
 			create('MTLNovel')
 		else:
 			update('MTLNovel')
+	else:
+		console.print("Incompatible link found!", style='bold red')
 elif args.check is not None:
 	headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
 	with open("cnnovels.json", 'r') as jsonFile:
 		data = json.load(jsonFile)
-	if '69shu' in data:
-		for link in data['69shu']:
-			chapternum = int(data['69shu'][link])
+	if '69shuba' in data:
+		for link in data['69shuba']:
+			chapternum = int(data['69shuba'][link])
 			url = link.replace("/txt",'').replace('.htm','/')
 			page = requests.get(url)
 			if page.status_code == 200:
@@ -184,9 +186,9 @@ if args.delete:
 		with open('cnnovels.json', 'r') as jsonFile:
 			data=json.load(jsonFile)
 		console.print('You currently have these novels in your json file:\n')
-		if '69shu' in data:
-			console.print('69shu:', style = 'bold blue')
-			for item in data['69shu']:
+		if '69shuba' in data:
+			console.print('69shuba:', style = 'bold blue')
+			for item in data['69shuba']:
 				page = requests.get(item)
 				soup = BeautifulSoup(page.content, 'html.parser')
 				booknav2 = soup.find('div', class_ = 'booknav2')
@@ -195,7 +197,7 @@ if args.delete:
 				console.print(str(choiceCounter) + ' : ' + title + ' ' + item)
 				choiceCounter +=1
 				deleteList.append(item)
-				category.append('69shu')
+				category.append('69shuba')
 			print('\n')
 		if 'ComradeMao' in data:
 			console.print('ComradeMao:', style = 'bold blue')
@@ -234,9 +236,9 @@ if args.list:
 		with open('cnnovels.json', 'r') as jsonFile:
 			data=json.load(jsonFile)
 		console.print('You currently have these novels in your json file:\n')
-		if '69shu' in data:
-			console.print('69shu:', style = 'bold blue')
-			for item in data['69shu']:
+		if '69shuba' in data:
+			console.print('69shuba:', style = 'bold blue')
+			for item in data['69shuba']:
 				page = requests.get(item)
 				soup = BeautifulSoup(page.content, 'html.parser')
 				a = soup.find('div', class_ = "booknav2")
