@@ -29,7 +29,7 @@ example:
 #### --link : Updating/Adding link to json file without chapter number
 
 example:
-  > python3 python_chinese_books_updater.py --link https://www.69shu.com/txt/42794.htm 
+  > python3 python_chinese_books_updater.py --link https://www.69shuba.com/book/46957.htm 
 
 This will update the json file with the novel with the last chapter read set as 1. 
 
@@ -39,7 +39,7 @@ Another example is updating using chapter number :
 
 example:
 
-  > python3 python_chinese_books_updater.py --link https://www.69shu.com/txt/42794.htm --chapter 300
+  > python3 python_chinese_books_updater.py --link https://www.69shuba.com/book/46957.htm --chapter 300
 
 #### --delete: Deleting from json file or erasing the whole json file if empty dictionary
 
