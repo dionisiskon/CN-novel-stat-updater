@@ -13,6 +13,7 @@ import os
 from rich.console import Console
 from time import sleep
 from googletrans import Translator
+import sys
 
 translator = Translator()
 console = Console()
@@ -74,9 +75,9 @@ def update(source):
 			console.print("Inserting new novel to your personal list")
 			with open("cnnovels.json", "w") as jsonFile:
 				json.dump(data, jsonFile, indent = 2)
-if args.link is not None:
+if args.link:
 	if '69shuba' in args.link:
-		console.print("You have inputted a 69shuba link\n", style='bold red')
+		console.print("You have inputted a 69shuba link\n", style='bold green')
 		page = requests.get(args.link)
 		if page.status_code == 200:
 			doesExist = os.path.exists(dir_path + '\cnnovels.json')
@@ -85,7 +86,7 @@ if args.link is not None:
 			else:
 				update('69shuba')
 	elif 'comrademao' in args.link:
-		console.print("You have inputted a comrademao link\n", style='bold red')
+		console.print("You have inputted a comrademao link\n", style='bold green')
 		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
 		page = requests.get(args.link, headers=headers)
 		if page.status_code == 200:
@@ -95,7 +96,7 @@ if args.link is not None:
 			else:
 				update('ComradeMao')
 	elif 'mtlnovel' in args.link:
-		console.print("You have inputted a MTLNovel link\n", style="bold red")
+		console.print("You have inputted a MTLNovel link\n", style="bold green")
 		doesExist = os.path.exists(dir_path + '\cnnovels.json')
 		if doesExist == False:
 			create('MTLNovel')
@@ -103,7 +104,11 @@ if args.link is not None:
 			update('MTLNovel')
 	else:
 		console.print("Incompatible link found!", style='bold red')
-elif args.check is not None:
+elif args.check:
+	doesExist = os.path.exists(dir_path + '\cnnovels.json')
+	if doesExist == False:
+		console.print("You can't check when a file doesn't exist! Try again with a valid argument!\n", style='bold red')
+		sys.exit()
 	headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
 	with open("cnnovels.json", 'r') as jsonFile:
 		data = json.load(jsonFile)
@@ -176,7 +181,7 @@ elif args.check is not None:
 				console.print("Current chapter: {}\n".format(chapternum))
 				console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(len(b) - chapternum, link))
 			driver.quit()
-if args.delete:
+elif args.delete:
 	choiceCounter = 1
 	console.print("Deleting process initiated...", style = 'bold red')
 	doesExist = os.path.exists(dir_path + '\cnnovels.json')
@@ -228,7 +233,9 @@ if args.delete:
 				with open("cnnovels.json", "w") as jsonFile:
 					json.dump(data, jsonFile, indent = 2)
 				print("The process has been terminated successfully")
-if args.list:
+	else:
+		console.print("\nFile doesn't exist!\n", style='bold red')
+elif args.list:
 	doesExist = os.path.exists(dir_path + '\cnnovels.json')
 	if doesExist == False:
 		console.print("Your novel collection list is empty!", style='bold red')
@@ -256,3 +263,5 @@ if args.list:
 			for item in data['MTLNovel']:
 				console.print(' '.join(elem.capitalize() for elem in item.split('/')[3].replace('-', ' ').split()) + ' ' + item, style='bold green')
 			print('\n')
+else:
+	console.print("No argument was inserted. Please try executing the script again in the proper format!\n", style = 'bold red')
