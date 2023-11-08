@@ -52,12 +52,26 @@ example:
 example:
 
   > python3 python_chinese_books_updater.py --list y
-  
+
+#### --load_bookmark: Loading bookmark file (tested with android Chrome)
+
+example:
+
+  > python3 python_chinese_books_updater.py --load_bookmark Bookmarks.json
+
 ## Screenshots
 
 ### Checking
 
 ![Checking screenshot](images_for_book_updater/checkingprocess.png)
+
+## Bookmarks location
+
+Android chrome bookmarks are located in:
+
+  > root/data/data/com.android.chrome/app_chrome/Default/Bookmarks
+
+I just renamed them to Bookmarks.json, but you can choose not to and use them as is.
 
 ## Errors
 
