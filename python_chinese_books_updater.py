@@ -5,6 +5,7 @@ Books updater/Library for 69shuba,Comrademao and MTLNovel because I've overfille
 
 """
 
+# Import Libraries
 import requests
 from bs4 import BeautifulSoup
 import argparse
@@ -25,10 +26,18 @@ parser.add_argument('--chapter', help="Chapter number specification")
 parser.add_argument('--check', help="Checking novel chapters progress")
 parser.add_argument('--delete', help="Delete novel from database")
 parser.add_argument('--list', help = 'List all novels that are currently inside the user\'s database')
+parser.add_argument('--load_bookmark', help = 'Load the bookmark file extractred from a browser')
 args, leftovers = parser.parse_known_args()
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
+if os.name == 'nt':
+	# For Windows
+	path_of_file = '\cnnovels.json'
+else:
+	# For Mac and Unix
+	path_of_file = '/cnnovels.json'
+	
 def create(source):
 	if args.chapter is not None:
 		dict1 = {args.link : args.chapter}
@@ -42,6 +51,7 @@ def create(source):
 		console.print("Inserting new novel to your personal list. Not finding chapter selection...Inputting 1 as chapter")
 		with open("cnnovels.json", 'w') as jsonFile:
 			json.dump(dictionary, jsonFile, indent = 2)
+
 def update(source):
 	if args.chapter is not None:
 		with open("cnnovels.json", 'r') as jsonFile:
@@ -75,12 +85,13 @@ def update(source):
 			console.print("Inserting new novel to your personal list")
 			with open("cnnovels.json", "w") as jsonFile:
 				json.dump(data, jsonFile, indent = 2)
+
 if args.link:
 	if '69shuba' in args.link:
 		console.print("You have inputted a 69shuba link\n", style='bold green')
 		page = requests.get(args.link)
 		if page.status_code == 200:
-			doesExist = os.path.exists(dir_path + '\cnnovels.json')
+			doesExist = os.path.exists(dir_path + path_of_file)
 			if doesExist == False:
 				create('69shuba')
 			else:
@@ -90,14 +101,14 @@ if args.link:
 		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
 		page = requests.get(args.link, headers=headers)
 		if page.status_code == 200:
-			doesExist = os.path.exists(dir_path + '\cnnovels.json')
+			doesExist = os.path.exists(dir_path + path_of_file)
 			if doesExist == False:
 				create('ComradeMao')
 			else:
 				update('ComradeMao')
 	elif 'mtlnovel' in args.link:
 		console.print("You have inputted a MTLNovel link\n", style="bold green")
-		doesExist = os.path.exists(dir_path + '\cnnovels.json')
+		doesExist = os.path.exists(dir_path + path_of_file)
 		if doesExist == False:
 			create('MTLNovel')
 		else:
@@ -105,7 +116,7 @@ if args.link:
 	else:
 		console.print("Incompatible link found!", style='bold red')
 elif args.check:
-	doesExist = os.path.exists(dir_path + '\cnnovels.json')
+	doesExist = os.path.exists(dir_path + path_of_file)
 	if doesExist == False:
 		console.print("You can't check when a file doesn't exist! Try again with a valid argument!\n", style='bold red')
 		sys.exit()
@@ -184,7 +195,7 @@ elif args.check:
 elif args.delete:
 	choiceCounter = 1
 	console.print("Deleting process initiated...", style = 'bold red')
-	doesExist = os.path.exists(dir_path + '\cnnovels.json')
+	doesExist = os.path.exists(dir_path + path_of_file)
 	deleteList = []
 	category = []
 	if doesExist == True:
@@ -236,7 +247,7 @@ elif args.delete:
 	else:
 		console.print("\nFile doesn't exist!\n", style='bold red')
 elif args.list:
-	doesExist = os.path.exists(dir_path + '\cnnovels.json')
+	doesExist = os.path.exists(dir_path + path_of_file)
 	if doesExist == False:
 		console.print("Your novel collection list is empty!", style='bold red')
 	else:
@@ -263,5 +274,72 @@ elif args.list:
 			for item in data['MTLNovel']:
 				console.print(' '.join(elem.capitalize() for elem in item.split('/')[3].replace('-', ' ').split()) + ' ' + item, style='bold green')
 			print('\n')
+elif args.load_bookmark:
+	# Tested with android chrome bookmarks file
+	valid_urls = []
+	f = open('Bookmarks.json')
+	data = json.load(f)
+	for i in data['roots']['synced']['children']:
+		if '69shuba' in i['url']:
+			valid_urls.append(i['url'])
+		elif 'comrademao' in i['url']:
+			valid_urls.append(i['url'])
+		elif 'mtlnovel' in i['url']:
+			valid_urls.append(i['url'])
+	f.close()
+	if len(valid_urls) > 0:
+		unique_urls = []
+		chapters = []
+		sources = []
+		for i in range(len(valid_urls) -1, -1, -1):
+			url_split = valid_urls[i].split('/')
+			if url_split[4] not in unique_urls:
+				if '69shuba' in valid_urls[i]:
+					unique_urls.append(url_split[4])
+					chapters.append(url_split[5])
+					sources.append('69shuba')
+				elif 'comrademao' in valid_urls[i]:
+					unique_urls.append(url_split[4])
+					chapters.append(url_split[5])
+					sources.append('ComradeMao')
+				else:
+					unique_urls.append(url_split[3])
+					chapters.append(url_split[4])
+					sources.append('MTLNovel')
+	else:
+		console.print('No valid links inside bookmark file!', style='bold red')
+		sys.exit()
+	counter = 0
+	headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+	for i in range(len(unique_urls)):
+		if '69shuba' in sources[i]:
+			page = requests.get('https://www.69shuba.com/txt/' + unique_urls[i] + '/' + chapters[i])
+			soup = BeautifulSoup(page.content, 'html.parser')
+			a = soup.find_all('h1')
+			chapter = a[0].text
+			b = translator.translate(chapter).text
+			splitter = b.split(' ')
+			chapter_num = splitter[1]
+			args.chapter = chapter_num.replace('.', '').replace(':', '')
+			args.link = 'https://www.69shuba.com/book/' + unique_urls[i] + '.htm'
+		elif 'ComradeMao' in sources[i]:
+			page = requests.get('https://comrademao.com/mtl/' + unique_urls[i] + '/' + chapters[i], headers=headers)
+			soup = BeautifulSoup(page.content, 'html.parser')
+			a = soup.find_all('h3')[0].text
+			b = translator.translate(a).text
+			c = b.split(' ')
+			chapter = c[-1].replace('.','').replace(':', '')
+			args.chapter = chapter
+			args.link = 'https://comrademao.com/novel/' + unique_urls[i]
+		else:
+			args.chapter = chapters[i].split('-')[1]
+			args.link = 'https://www.mtlnovel.com/' + unique_urls[i]
+		doesExist = os.path.exists(dir_path + path_of_file)
+		if doesExist == False:
+			create(sources[i])
+		else:
+			update(sources[i])
+		counter +=1
+		console.print('Added {} novel to collection list'.format(str(counter)), style = 'bold green')
 else:
 	console.print("No argument was inserted. Please try executing the script again in the proper format!\n", style = 'bold red')
