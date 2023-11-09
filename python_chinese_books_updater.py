@@ -288,7 +288,7 @@ elif args.list:
 elif args.load_bookmark:
 	# Tested with android chrome bookmarks file
 	valid_urls = []
-	f = open('Bookmarks.json')
+	f = open(sys.argv[2])
 	data = json.load(f)
 	for i in data['roots']['synced']['children']:
 		if '69shuba' in i['url'] or 'comrademao' in i['url'] or 'mtlnovel' in i['url']:
