@@ -231,10 +231,21 @@ elif args.delete:
 				deleteList.append(item)
 				category.append('MTLNovel')
 			print('\n')
+		console.print(str(choiceCounter) + ': ' + 'Delete all')
+		choiceCounter += 1
 		choice = int(input('Please select your choice\n'))
 		if choice > choiceCounter - 1 or choice < 1:
 			console.print("The choice number you selected is wrong. Try again!", style="bold red")
 		else:
+			if choice > len(deleteList):
+				asd = input('\nAre you sure? type "y" or "yes" for deleting everything\n')
+				if asd == 'y' or asd == 'yes':
+					os.remove('cnnovels.json')
+					console.print('The bookmarks were deleted successfully!', style='bold blue')
+					sys.exit()
+				else:
+					console.print('Try again with a valid option!', style='bold red')
+					sys.exit()
 			data[category[choiceCounter - 2]].pop(deleteList[choiceCounter - 2])
 			if len(data[category[choiceCounter - 2]]) == 0:
 				data.pop(category[choiceCounter - 2])
@@ -280,11 +291,7 @@ elif args.load_bookmark:
 	f = open('Bookmarks.json')
 	data = json.load(f)
 	for i in data['roots']['synced']['children']:
-		if '69shuba' in i['url']:
-			valid_urls.append(i['url'])
-		elif 'comrademao' in i['url']:
-			valid_urls.append(i['url'])
-		elif 'mtlnovel' in i['url']:
+		if '69shuba' in i['url'] or 'comrademao' in i['url'] or 'mtlnovel' in i['url']:
 			valid_urls.append(i['url'])
 	f.close()
 	if len(valid_urls) > 0:
