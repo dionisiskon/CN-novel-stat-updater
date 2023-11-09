@@ -1,4 +1,4 @@
-# CN-novel-stat-updater
+# Chinese novels library / CN novel stat updater
 
 This python program helps in keeping stats of your favorite novels from the chinese novel websites called 69shuba.com, MTLNovel.com and comrademao.com. I made it because I filled my bookmarks and I can't always open 50 pages. :joy:
 
@@ -12,6 +12,13 @@ This python program helps in keeping stats of your favorite novels from the chin
 - Webdriver Manager for MTLNovel (pip install webdriver-manager)
 
 Of course, python3 is needed. The forementioned packages can be installed using 'python3 -m pip install ...' or 'pip3 install ...' 
+
+## Currently supported
+
+ - Comrademao
+ - MTLNovel
+ - 69shuba
+
 ## Usage
 
 ### Arguments
