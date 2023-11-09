@@ -72,6 +72,22 @@ example:
 
 ![Checking screenshot](images_for_book_updater/checkingprocess.png)
 
+### Listing
+
+![List screenshot](images_for_book_updater/list.png)
+
+### Helping
+
+![Help screenshot](images_for_book_updater/help.png)
+
+### Bookmarks
+
+![Bookmark screenshot](images_for_book_updater/newbookmark.png)
+
+### Removing
+
+![Deletion screenshot](images_for_book_updater/delete.png)
+
 ## Bookmarks location
 
 Android chrome bookmarks are located in:
