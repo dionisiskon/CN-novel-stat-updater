@@ -84,7 +84,7 @@ example:
 
 ![Bookmark screenshot](images_for_book_updater/newbookmark.png)
 
-### Removing
+### Deleting
 
 ![Deletion screenshot](images_for_book_updater/delete.png)
 
