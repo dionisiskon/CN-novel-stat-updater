@@ -16,6 +16,7 @@ from time import sleep
 from googletrans import Translator
 import sys
 
+# Arguments and console/translator
 translator = Translator()
 console = Console()
 console.print("\nCN books stat updater\n", style="bold blue")
@@ -29,8 +30,10 @@ parser.add_argument('--list', help = 'List all novels that are currently inside 
 parser.add_argument('--load_bookmark', help = 'Load the bookmark file extractred from a browser')
 args, leftovers = parser.parse_known_args()
 
+# Current path
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
+# Check for OS
 if os.name == 'nt':
 	# For Windows
 	path_of_file = '\cnnovels.json'
@@ -38,6 +41,7 @@ else:
 	# For Mac and Unix
 	path_of_file = '/cnnovels.json'
 	
+# Function to create a file
 def create(source):
 	if args.chapter is not None:
 		dict1 = {args.link : args.chapter}
@@ -52,6 +56,7 @@ def create(source):
 		with open("cnnovels.json", 'w') as jsonFile:
 			json.dump(dictionary, jsonFile, indent = 2)
 
+# Function to add to an existing file
 def update(source):
 	if args.chapter is not None:
 		with open("cnnovels.json", 'r') as jsonFile:
@@ -246,9 +251,9 @@ elif args.delete:
 				else:
 					console.print('Try again with a valid option!', style='bold red')
 					sys.exit()
-			data[category[choiceCounter - 2]].pop(deleteList[choiceCounter - 2])
-			if len(data[category[choiceCounter - 2]]) == 0:
-				data.pop(category[choiceCounter - 2])
+			data[category[choice - 1]].pop(deleteList[choice - 1])
+			if len(data[category[choice - 1]]) == 0:
+				data.pop(category[choice - 1])
 			if len(data) == 0:
 				os.remove('cnnovels.json')
 			else:
