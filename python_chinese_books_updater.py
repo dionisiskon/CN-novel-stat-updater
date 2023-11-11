@@ -40,7 +40,40 @@ if os.name == 'nt':
 else:
 	# For Mac and Unix
 	path_of_file = '/cnnovels.json'
-	
+
+def detection(page, link):
+	console.print('\nSearching for chapter information automatically...\n', style='bold green')
+	if '69shuba' in link and 'txt' in link:
+		soup = BeautifulSoup(page.content, 'html.parser')
+		a = soup.find_all('h1')
+		chapter = a[0].text
+		b = translator.translate(chapter).text
+		splitter = b.split(' ')
+		index = splitter.index('Chapter') + 1
+		chapter = splitter[index].replace('.', '').replace(':', '')
+		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter), style='bold green')
+		args.link = 'https://www.69shuba.com/book/' + link.split('/')[4] + '.htm'
+		args.chapter = chapter
+	elif 'comrademao' in link and 'chapter' in link:
+		soup = BeautifulSoup(page.content, 'html.parser')
+		a = soup.find_all('h3')[0].text
+		b = translator.translate(a).text
+		c = b.split(' ')
+		chapter = c[-1].replace('.','').replace(':', '')
+		chapter = chapter.replace('chapter','').replace('Chapter','')
+		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter.replace('\n', '').replace(' ','')), style='bold green')
+		args.link = 'https://comrademao.com/novel/' + link.split('/')[-3]
+		args.chapter = chapter
+	elif 'mtlnovel' in link and 'chapter' in link:
+		splitter = link.split('-')
+		res = list(filter(lambda x: 'chapter' in x, splitter))
+		index = splitter.index(res[0]) + 1
+		chapter = splitter[index]
+		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter), style='bold green')
+		args.chapter = chapter
+		args.link = 'https://www.mtlnovel.com/' + link.split('/')[-3]
+	else:
+		console.print('No chapter information could be extracted. Setting chapter as 1 in the json file...\n', style='blue')
 # Function to create a file
 def create(source):
 	if args.chapter is not None:
@@ -95,6 +128,7 @@ if args.link:
 	if '69shuba' in args.link:
 		console.print("You have inputted a 69shuba link\n", style='bold green')
 		page = requests.get(args.link)
+		detection(page, args.link)
 		if page.status_code == 200:
 			doesExist = os.path.exists(dir_path + path_of_file)
 			if doesExist == False:
@@ -105,6 +139,7 @@ if args.link:
 		console.print("You have inputted a comrademao link\n", style='bold green')
 		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
 		page = requests.get(args.link, headers=headers)
+		detection(page, args.link)
 		if page.status_code == 200:
 			doesExist = os.path.exists(dir_path + path_of_file)
 			if doesExist == False:
@@ -114,6 +149,7 @@ if args.link:
 	elif 'mtlnovel' in args.link:
 		console.print("You have inputted a MTLNovel link\n", style="bold green")
 		doesExist = os.path.exists(dir_path + path_of_file)
+		detection('', args.link)
 		if doesExist == False:
 			create('MTLNovel')
 		else:
@@ -331,8 +367,8 @@ elif args.load_bookmark:
 			chapter = a[0].text
 			b = translator.translate(chapter).text
 			splitter = b.split(' ')
-			chapter_num = splitter[1]
-			args.chapter = chapter_num.replace('.', '').replace(':', '')
+			index = splitter.index('Chapter') + 1
+			args.chapter = splitter[index].replace('.', '').replace(':', '')
 			args.link = 'https://www.69shuba.com/book/' + unique_urls[i] + '.htm'
 		elif 'ComradeMao' in sources[i]:
 			page = requests.get('https://comrademao.com/mtl/' + unique_urls[i] + '/' + chapters[i], headers=headers)
