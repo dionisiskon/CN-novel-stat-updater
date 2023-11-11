@@ -69,6 +69,12 @@ example:
 
 ## Screenshots
 
+### Automatic detection 
+
+![Automatic Detection Success](automatic_detection_success.png)
+
+![Automatic Detection Failure](automatic_detection_failure.png)
+
 ### Checking
 
 ![Checking screenshot](images_for_book_updater/checkingprocess.png)
