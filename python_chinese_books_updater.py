@@ -15,6 +15,7 @@ from rich.console import Console
 from time import sleep
 from googletrans import Translator
 import sys
+import re
 
 # Arguments and console/translator
 translator = Translator()
@@ -50,7 +51,7 @@ def detection(page, link):
 		b = translator.translate(chapter).text
 		splitter = b.split(' ')
 		index = splitter.index('Chapter') + 1
-		chapter = splitter[index].replace('.', '').replace(':', '')
+		chapter = re.sub("[^0-9]", "", splitter[index])
 		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter), style='bold green')
 		args.link = 'https://www.69shuba.com/book/' + link.split('/')[4] + '.htm'
 		args.chapter = chapter
@@ -59,16 +60,15 @@ def detection(page, link):
 		a = soup.find_all('h3')[0].text
 		b = translator.translate(a).text
 		c = b.split(' ')
-		chapter = c[-1].replace('.','').replace(':', '')
-		chapter = chapter.replace('chapter','').replace('Chapter','')
-		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter.replace('\n', '').replace(' ','')), style='bold green')
+		chapter = re.sub("[^0-9]", "", c[-1])
+		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter), style='bold green')
 		args.link = 'https://comrademao.com/novel/' + link.split('/')[-3]
 		args.chapter = chapter
 	elif 'mtlnovel' in link and 'chapter' in link:
 		splitter = link.split('-')
 		res = list(filter(lambda x: 'chapter' in x, splitter))
 		index = splitter.index(res[0]) + 1
-		chapter = splitter[index]
+		chapter = re.sub("[^0-9]", "", splitter[index])
 		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter), style='bold green')
 		args.chapter = chapter
 		args.link = 'https://www.mtlnovel.com/' + link.split('/')[-3]
@@ -368,7 +368,7 @@ elif args.load_bookmark:
 			b = translator.translate(chapter).text
 			splitter = b.split(' ')
 			index = splitter.index('Chapter') + 1
-			args.chapter = splitter[index].replace('.', '').replace(':', '')
+			args.chapter = re.sub("[^0-9]", "", splitter[index])
 			args.link = 'https://www.69shuba.com/book/' + unique_urls[i] + '.htm'
 		elif 'ComradeMao' in sources[i]:
 			page = requests.get('https://comrademao.com/mtl/' + unique_urls[i] + '/' + chapters[i], headers=headers)
@@ -376,11 +376,14 @@ elif args.load_bookmark:
 			a = soup.find_all('h3')[0].text
 			b = translator.translate(a).text
 			c = b.split(' ')
-			chapter = c[-1].replace('.','').replace(':', '')
+			chapter = re.sub("[^0-9]", "", c[-1])
 			args.chapter = chapter
 			args.link = 'https://comrademao.com/novel/' + unique_urls[i]
 		else:
-			args.chapter = chapters[i].split('-')[1]
+			splitter = chapters[i].split('-')
+			res = list(filter(lambda x: 'chapter' in x, splitter))
+			index = splitter.index(res[0]) + 1
+			args.chapter = re.sub("[^0-9]", "", splitter[index])
 			args.link = 'https://www.mtlnovel.com/' + unique_urls[i]
 		doesExist = os.path.exists(dir_path + path_of_file)
 		if doesExist == False:
