@@ -71,9 +71,9 @@ example:
 
 ### Automatic detection 
 
-![Automatic Detection Success](automatic_detection_success.png)
+![Automatic Detection Success](images_for_book_updater/automatic_detection_success.png)
 
-![Automatic Detection Failure](automatic_detection_failure.png)
+![Automatic Detection Failure](images_for_book_updater/automatic_detection_failure.png)
 
 ### Checking
 
