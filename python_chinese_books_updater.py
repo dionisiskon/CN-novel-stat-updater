@@ -128,8 +128,8 @@ if args.link:
 	if '69shuba' in args.link:
 		console.print("You have inputted a 69shuba link\n", style='bold green')
 		page = requests.get(args.link)
-		detection(page, args.link)
 		if page.status_code == 200:
+			detection(page, args.link)
 			doesExist = os.path.exists(dir_path + path_of_file)
 			if doesExist == False:
 				create('69shuba')
@@ -139,8 +139,8 @@ if args.link:
 		console.print("You have inputted a comrademao link\n", style='bold green')
 		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
 		page = requests.get(args.link, headers=headers)
-		detection(page, args.link)
 		if page.status_code == 200:
+			detection(page, args.link)
 			doesExist = os.path.exists(dir_path + path_of_file)
 			if doesExist == False:
 				create('ComradeMao')
