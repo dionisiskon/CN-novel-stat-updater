@@ -403,7 +403,7 @@ elif args.load_bookmark:
 					unique_urls.append(url_split[3])
 					chapters.append(url_split[4])
 					sources.append('MTLNovel')
-				else:
+				elif 'novelfull' in valid_urls[i]:
 					unique_urls.append(url_split[3].replace('.html', ''))
 					chapters.append(url_split[4])
 					sources.append('NovelFull')
