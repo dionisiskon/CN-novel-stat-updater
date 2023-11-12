@@ -1,6 +1,6 @@
 """
 
-Books updater/Library for 69shuba,Comrademao and MTLNovel because I've overfilled my bookmarks!
+Books updater/Library for 69shuba,Comrademao, NovelFull MTLNovel because I've overfilled my bookmarks!
 
 
 """
@@ -64,6 +64,14 @@ def detection(page, link):
 		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter), style='bold green')
 		args.link = 'https://comrademao.com/novel/' + link.split('/')[-3]
 		args.chapter = chapter
+	elif 'novelfull' in link and 'chapter' in link:
+		splitter = link.split('-')
+		res = list(filter(lambda x: 'chapter' in x, splitter))
+		index = splitter.index(res[0]) + 1
+		chapter = re.sub("[^0-9]", "", splitter[index])
+		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter), style='bold green')
+		args.chapter = chapter
+		args.link = 'https://novelfull.com/' + link.split('/')[-2] + '.html'
 	elif 'mtlnovel' in link and 'chapter' in link:
 		splitter = link.split('-')
 		res = list(filter(lambda x: 'chapter' in x, splitter))
@@ -154,6 +162,16 @@ if args.link:
 			create('MTLNovel')
 		else:
 			update('MTLNovel')
+	elif 'novelfull' in args.link:
+		console.print("You have inputted a NovelFull link\n", style='bold green')
+		page = requests.get(args.link)
+		if page.status_code == 200:
+			detection(page, args.link)
+			doesExist = os.path.exists(dir_path + path_of_file)
+			if doesExist == False:
+				create('NovelFull')
+			else:
+				update('NovelFull')
 	else:
 		console.print("Incompatible link found!", style='bold red')
 elif args.check:
@@ -206,6 +224,23 @@ elif args.check:
 					console.print("Current chapter: {}\n".format(chapternum))
 					console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(len(c) - chapternum, link))
 			sleep(2)
+	if 'NovelFull' in data:
+		for link in data['NovelFull']:
+			chapternum = int(data['NovelFull'][link])
+			page = requests.get(link)
+			if page.status_code == 200:
+				soup = BeautifulSoup(page.content, 'html.parser')
+				a = soup.find('ul', class_ = 'l-chapters')
+				b = a.find_all('li')[0]
+				c = b.find('a')['title']
+				c = re.sub("[^0-9]", "", c)
+				title = soup.find('h3', class_ = 'title').text
+				console.print(title, style='green')
+				if int(c) == chapternum:
+					console.print("You are on the latest chapter. Come back and check again for new updates!\n")
+				else:
+					console.print("Current chapter: {}\n".format(chapternum))
+					console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(int(c) - chapternum, link))
 	if 'MTLNovel' in data:
 		from selenium import webdriver
 		from webdriver_manager.chrome import ChromeDriverManager
@@ -272,6 +307,14 @@ elif args.delete:
 				deleteList.append(item)
 				category.append('MTLNovel')
 			print('\n')
+		if 'NovelFull' in data:
+			console.print('NovelFull:', style = 'bold blue')
+			for item in data['NovelFull']:
+				console.print(str(choiceCounter) + ': ' + ' '.join(elem.capitalize() for elem in item.split('/')[3].replace('-', ' ').replace('.html', '').split()) + ' ' + item)
+				choiceCounter +=1
+				deleteList.append(item)
+				category.append('NovelFull')
+			print('\n')
 		console.print(str(choiceCounter) + ': ' + 'Delete all')
 		choiceCounter += 1
 		choice = int(input('Please select your choice\n'))
@@ -326,13 +369,18 @@ elif args.list:
 			for item in data['MTLNovel']:
 				console.print(' '.join(elem.capitalize() for elem in item.split('/')[3].replace('-', ' ').split()) + ' ' + item, style='bold green')
 			print('\n')
+		if 'NovelFull' in data:
+			console.print('NovelFull:', style = 'bold blue')
+			for item in data['NovelFull']:
+				console.print(' '.join(elem.capitalize() for elem in item.split('/')[3].replace('-', ' ').replace('.html', '').split()), style = 'bold green')
+			print('\n')
 elif args.load_bookmark:
 	# Tested with android chrome bookmarks file
 	valid_urls = []
 	f = open(sys.argv[2])
 	data = json.load(f)
 	for i in data['roots']['synced']['children']:
-		if '69shuba' in i['url'] or 'comrademao' in i['url'] or 'mtlnovel' in i['url']:
+		if '69shuba' in i['url'] or 'comrademao' in i['url'] or 'mtlnovel' in i['url'] or 'novelfull' in i['url']:
 			valid_urls.append(i['url'])
 	f.close()
 	if len(valid_urls) > 0:
@@ -350,10 +398,15 @@ elif args.load_bookmark:
 					unique_urls.append(url_split[4])
 					chapters.append(url_split[5])
 					sources.append('ComradeMao')
-				else:
+			if url_split[3] not in unique_urls:
+				if 'mtlnovel' in valid_urls[i]:
 					unique_urls.append(url_split[3])
 					chapters.append(url_split[4])
 					sources.append('MTLNovel')
+				else:
+					unique_urls.append(url_split[3].replace('.html', ''))
+					chapters.append(url_split[4])
+					sources.append('NovelFull')
 	else:
 		console.print('No valid links inside bookmark file!', style='bold red')
 		sys.exit()
@@ -379,6 +432,12 @@ elif args.load_bookmark:
 			chapter = re.sub("[^0-9]", "", c[-1])
 			args.chapter = chapter
 			args.link = 'https://comrademao.com/novel/' + unique_urls[i]
+		elif 'NovelFull' in sources[i]:
+			link = 'https://novelfull.com/' + unique_urls[i] + '/' + chapters[i]
+			page = requests.get(link)
+			soup = BeautifulSoup(page.content, 'html.parser')
+			detection(soup, link)
+			title = ' '.join(elem.capitalize() for elem in args.link.split('https://novelfull.com/')[1].replace('/','').replace('-',' ').replace('.html', '').split())
 		else:
 			splitter = chapters[i].split('-')
 			res = list(filter(lambda x: 'chapter' in x, splitter))
