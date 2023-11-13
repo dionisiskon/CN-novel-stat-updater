@@ -317,28 +317,29 @@ elif args.delete:
 			print('\n')
 		console.print(str(choiceCounter) + ': ' + 'Delete all')
 		choiceCounter += 1
-		choice = int(input('Please select your choice\n'))
-		if choice > choiceCounter - 1 or choice < 1:
-			console.print("The choice number you selected is wrong. Try again!", style="bold red")
-		else:
-			if choice > len(deleteList):
-				asd = input('\nAre you sure? type "y" or "yes" for deleting everything\n')
-				if asd == 'y' or asd == 'yes':
-					os.remove('cnnovels.json')
-					console.print('The bookmarks were deleted successfully!', style='bold blue')
-					sys.exit()
-				else:
-					console.print('Try again with a valid option!', style='bold red')
-					sys.exit()
-			data[category[choice - 1]].pop(deleteList[choice - 1])
-			if len(data[category[choice - 1]]) == 0:
-				data.pop(category[choice - 1])
-			if len(data) == 0:
-				os.remove('cnnovels.json')
+		choices = list(map(int, input('Please select your choice\n').split(',')))
+		for choice in choices:
+			if choice > choiceCounter - 1 or choice < 1:
+				console.print("The choice number you selected is wrong. Try again!", style="bold red")
 			else:
-				with open("cnnovels.json", "w") as jsonFile:
-					json.dump(data, jsonFile, indent = 2)
-				print("The process has been terminated successfully")
+				if choice > len(deleteList):
+					asd = input('\nAre you sure? type "y" or "yes" for deleting everything\n')
+					if asd == 'y' or asd == 'yes':
+						os.remove('cnnovels.json')
+						console.print('The bookmarks were deleted successfully!', style='bold blue')
+						sys.exit()
+					else:
+						console.print('Try again with a valid option!', style='bold red')
+						sys.exit()
+				data[category[choice - 1]].pop(deleteList[choice - 1])
+				if len(data[category[choice - 1]]) == 0:
+					data.pop(category[choice - 1])
+				if len(data) == 0:
+					os.remove('cnnovels.json')
+				else:
+					with open("cnnovels.json", "w") as jsonFile:
+						json.dump(data, jsonFile, indent = 2)
+					print("The process has been terminated successfully")
 	else:
 		console.print("\nFile doesn't exist!\n", style='bold red')
 elif args.list:
