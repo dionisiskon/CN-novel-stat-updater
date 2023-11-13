@@ -51,7 +51,7 @@ def detection(page, link):
 		b = translator.translate(chapter).text
 		splitter = b.split(' ')
 		index = splitter.index('Chapter') + 1
-		chapter = re.sub("[^0-9]", "", splitter[index])
+		chapter = re.findall(r'\d+', splitter[index])[0] 
 		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter), style='bold green')
 		args.link = 'https://www.69shuba.com/book/' + link.split('/')[4] + '.htm'
 		args.chapter = chapter
@@ -60,23 +60,23 @@ def detection(page, link):
 		a = soup.find_all('h3')[0].text
 		b = translator.translate(a).text
 		c = b.split(' ')
-		chapter = re.sub("[^0-9]", "", c[-1])
+		chapter = re.findall(r'\d+', c[-1])[0] 
 		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter), style='bold green')
 		args.link = 'https://comrademao.com/novel/' + link.split('/')[-3]
 		args.chapter = chapter
 	elif 'novelfull' in link and 'chapter' in link:
 		splitter = link.split('-')
 		res = list(filter(lambda x: 'chapter' in x, splitter))
-		index = splitter.index(res[0]) + 1
-		chapter = re.sub("[^0-9]", "", splitter[index])
+		index = splitter.index(res[-1]) + 1
+		chapter = re.findall(r'\d+', splitter[index])[0] 
 		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter), style='bold green')
 		args.chapter = chapter
 		args.link = 'https://novelfull.com/' + link.split('/')[-2] + '.html'
 	elif 'mtlnovel' in link and 'chapter' in link:
 		splitter = link.split('-')
 		res = list(filter(lambda x: 'chapter' in x, splitter))
-		index = splitter.index(res[0]) + 1
-		chapter = re.sub("[^0-9]", "", splitter[index])
+		index = splitter.index(res[-1]) + 1
+		chapter = re.findall(r'\d+', splitter[index])[0] 
 		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter), style='bold green')
 		args.chapter = chapter
 		args.link = 'https://www.mtlnovel.com/' + link.split('/')[-3]
@@ -87,13 +87,11 @@ def create(source):
 	if args.chapter is not None:
 		dict1 = {args.link : args.chapter}
 		dictionary = {source : dict1}
-		console.print("Inserting new novel to your personal list")
 		with open("cnnovels.json", "w") as jsonFile:
 			json.dump(dictionary, jsonFile, indent = 2)
 	else:
 		dict1 = {args.link : '1'}
 		dictionary = {source : dict1}
-		console.print("Inserting new novel to your personal list. Not finding chapter selection...Inputting 1 as chapter")
 		with open("cnnovels.json", 'w') as jsonFile:
 			json.dump(dictionary, jsonFile, indent = 2)
 
@@ -112,7 +110,6 @@ def update(source):
 			dict1 = {args.link : args.chapter}
 			dictionary = {source : dict1}
 			data.update(dictionary)
-			console.print("Inserting new novel to your personal list")
 			with open("cnnovels.json", "w") as jsonFile:
 				json.dump(data, jsonFile, indent = 2)
 	else:
@@ -128,7 +125,6 @@ def update(source):
 			dict1 = {args.link : '1'}
 			dictionary = {source : dict1}
 			data.update(dictionary)
-			console.print("Inserting new novel to your personal list")
 			with open("cnnovels.json", "w") as jsonFile:
 				json.dump(data, jsonFile, indent = 2)
 
@@ -143,6 +139,7 @@ if args.link:
 				create('69shuba')
 			else:
 				update('69shuba')
+			console.print('Added novel to collection list\n', style='bold green')
 	elif 'comrademao' in args.link:
 		console.print("You have inputted a comrademao link\n", style='bold green')
 		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
@@ -154,6 +151,7 @@ if args.link:
 				create('ComradeMao')
 			else:
 				update('ComradeMao')
+			console.print('Added novel to collection list\n', style='bold green')
 	elif 'mtlnovel' in args.link:
 		console.print("You have inputted a MTLNovel link\n", style="bold green")
 		doesExist = os.path.exists(dir_path + path_of_file)
@@ -162,6 +160,7 @@ if args.link:
 			create('MTLNovel')
 		else:
 			update('MTLNovel')
+		console.print('Added novel to collection list\n', style='bold green')
 	elif 'novelfull' in args.link:
 		console.print("You have inputted a NovelFull link\n", style='bold green')
 		page = requests.get(args.link)
@@ -172,6 +171,7 @@ if args.link:
 				create('NovelFull')
 			else:
 				update('NovelFull')
+			console.print('Added novel to collection list\n', style='bold green')
 	else:
 		console.print("Incompatible link found!", style='bold red')
 elif args.check:
@@ -233,7 +233,7 @@ elif args.check:
 				a = soup.find('ul', class_ = 'l-chapters')
 				b = a.find_all('li')[0]
 				c = b.find('a')['title']
-				c = re.sub("[^0-9]", "", c)
+				c = re.findall(r'\d+', c)[0] 
 				title = soup.find('h3', class_ = 'title').text
 				console.print(title, style='green')
 				if int(c) == chapternum:
@@ -421,7 +421,7 @@ elif args.load_bookmark:
 			b = translator.translate(chapter).text
 			splitter = b.split(' ')
 			index = splitter.index('Chapter') + 1
-			args.chapter = re.sub("[^0-9]", "", splitter[index])
+			args.chapter = re.findall(r'\d+', splitter[index])[0] 
 			args.link = 'https://www.69shuba.com/book/' + unique_urls[i] + '.htm'
 		elif 'ComradeMao' in sources[i]:
 			page = requests.get('https://comrademao.com/mtl/' + unique_urls[i] + '/' + chapters[i], headers=headers)
@@ -429,7 +429,7 @@ elif args.load_bookmark:
 			a = soup.find_all('h3')[0].text
 			b = translator.translate(a).text
 			c = b.split(' ')
-			chapter = re.sub("[^0-9]", "", c[-1])
+			chapter = re.findall(r'\d+', c[-1])[0] 
 			args.chapter = chapter
 			args.link = 'https://comrademao.com/novel/' + unique_urls[i]
 		elif 'NovelFull' in sources[i]:
@@ -441,8 +441,8 @@ elif args.load_bookmark:
 		else:
 			splitter = chapters[i].split('-')
 			res = list(filter(lambda x: 'chapter' in x, splitter))
-			index = splitter.index(res[0]) + 1
-			args.chapter = re.sub("[^0-9]", "", splitter[index])
+			index = splitter.index(res[-1]) + 1
+			args.chapter = re.findall(r'\d+', splitter[index])[0] 
 			args.link = 'https://www.mtlnovel.com/' + unique_urls[i]
 		doesExist = os.path.exists(dir_path + path_of_file)
 		if doesExist == False:
