@@ -43,7 +43,7 @@ else:
 	path_of_file = '/cnnovels.json'
 
 def detection(page, link):
-	console.print('\nSearching for chapter information automatically...\n', style='bold green')
+	console.print('\nSearching for chapter information automatically...', style='bold green')
 	if '69shuba' in link and 'txt' in link:
 		soup = BeautifulSoup(page.content, 'html.parser')
 		a = soup.find_all('h1')
@@ -81,7 +81,7 @@ def detection(page, link):
 		args.chapter = chapter
 		args.link = 'https://www.mtlnovel.com/' + link.split('/')[-3]
 	else:
-		console.print('No chapter information could be extracted. Setting chapter as 1 in the json file...\n', style='blue')
+		console.print('\nNo chapter information could be extracted. Setting chapter as 1 in the json file...\n', style='blue')
 # Function to create a file
 def create(source):
 	if args.chapter is not None:
@@ -130,7 +130,7 @@ def update(source):
 
 if args.link:
 	if '69shuba' in args.link:
-		console.print("You have inputted a 69shuba link\n", style='bold green')
+		console.print("You have inputted a 69shuba link", style='bold green')
 		page = requests.get(args.link)
 		if page.status_code == 200:
 			detection(page, args.link)
@@ -153,7 +153,7 @@ if args.link:
 				update('ComradeMao')
 			console.print('Added novel to collection list\n', style='bold green')
 	elif 'mtlnovel' in args.link:
-		console.print("You have inputted a MTLNovel link\n", style="bold green")
+		console.print("You have inputted a MTLNovel link", style="bold green")
 		doesExist = os.path.exists(dir_path + path_of_file)
 		detection('', args.link)
 		if doesExist == False:
@@ -162,7 +162,7 @@ if args.link:
 			update('MTLNovel')
 		console.print('Added novel to collection list\n', style='bold green')
 	elif 'novelfull' in args.link:
-		console.print("You have inputted a NovelFull link\n", style='bold green')
+		console.print("You have inputted a NovelFull link", style='bold green')
 		page = requests.get(args.link)
 		if page.status_code == 200:
 			detection(page, args.link)
