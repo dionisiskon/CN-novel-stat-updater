@@ -72,7 +72,7 @@ example:
 
 ## Screenshots
 
-### Automatic detection 
+### Adding to collection list/Automatic detection 
 
 ![Automatic Detection Success](images_for_book_updater/automatic_detection_success.png)
 
