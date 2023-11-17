@@ -1,6 +1,6 @@
 # Chinese novels library / CN novel stat updater
 
-This python script helps in keeping stats of your favorite novels from the chinese novel websites 69shuba.com, MTLNovel.com, Novelfull.com and comrademao.com. I made it because I overfilled my bookmarks and I can't always open 50 pages. :joy:
+This python script helps in keeping stats of your favorite novels from the chinese novel websites 69shuba.com, MTLNovel.com, Novelfull.com, Novelhi.com and comrademao.com. I made it because I overfilled my bookmarks and I can't always open 50 pages. :joy:
 
 ## Prerequisites
 
@@ -20,6 +20,7 @@ Of course, python3 is needed. The forementioned packages can be installed using 
  - MTLNovel
  - 69shuba
  - NovelFull
+ - NovelHi
 
 ## Usage
 

@@ -80,6 +80,10 @@ def detection(page, link):
 		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter), style='bold green')
 		args.chapter = chapter
 		args.link = 'https://www.mtlnovel.com/' + link.split('/')[-3]
+	elif 'novelhi' in link and link.split('/')[5]:
+		args.chapter = link.split('/')[5]
+		args.link = 'https://novelhi.com/s/' + link.split('/')[4]
+		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(args.chapter), style='bold green')
 	else:
 		console.print('\nNo chapter information could be extracted. Setting chapter as 1 in the json file...\n', style='blue')
 # Function to create a file
@@ -172,6 +176,17 @@ if args.link:
 			else:
 				update('NovelFull')
 			console.print('Added novel to collection list\n', style='bold green')
+	elif 'novelhi' in args.link:
+		console.print("You have inputted a NovelBin link", style='bold green')
+		page = requests.get(args.link)
+		if page.status_code == 200:
+			detection(page, args.link)
+			doesExist = os.path.exists(dir_path + path_of_file)
+			if doesExist == False:
+				create('NovelHi')
+			else:
+				update('NovelHi')
+			console.print('Added novel to collection list\n', style='bold green')
 	else:
 		console.print("Incompatible link found!", style='bold red')
 elif args.check:
@@ -241,6 +256,22 @@ elif args.check:
 				else:
 					console.print("Current chapter: {}\n".format(chapternum))
 					console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(int(c) - chapternum, link))
+	if 'NovelHi' in data:
+		for link in data['NovelHi']:
+			chapternum = int(data['NovelHi'][link])
+			chapterpage = 'https://novelhi.com/s/index/' + link.split('/')[4]
+			page = requests.get(chapterpage)
+			if page.status_code == 200:
+				soup = BeautifulSoup(page.content, 'html.parser')
+				title = soup.find('div', class_ = 'tit').find('h1').text
+				a = soup.find('div', class_ = 'dirWrap cf').find('h3').text
+				chapter = a.replace('Content (', '').replace(')', '')
+				console.print(title, style = 'green')
+				if int(chapter) == 'chapternum':
+					console.print("You are on the latest chapter. Come back and check again for new updates!\n")
+				else:
+					console.print("Current chapter: {}\n".format(chapternum))
+					console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(int(chapter) - chapternum, link))
 	if 'MTLNovel' in data:
 		from selenium import webdriver
 		from webdriver_manager.chrome import ChromeDriverManager
@@ -315,6 +346,14 @@ elif args.delete:
 				deleteList.append(item)
 				category.append('NovelFull')
 			print('\n')
+		if 'NovelHi' in data:
+			console.print('NovelHi:', style = 'bold blue')
+			for item in data['NovelHi']:
+				console.print(str(choiceCounter) + ': ' + ' '.join(elem.capitalize() for elem in item.split('/')[4].replace('-', ' ').replace('.html', '').split()) + ' ' + item)
+				choiceCounter +=1
+				deleteList.append(item)
+				category.append('NovelHi')
+			print('\n')
 		console.print(str(choiceCounter) + ': ' + 'Delete all')
 		choiceCounter += 1
 		choices = list(map(int, input('Please select your choice\n').split(',')))
@@ -375,6 +414,11 @@ elif args.list:
 			for item in data['NovelFull']:
 				console.print(' '.join(elem.capitalize() for elem in item.split('/')[3].replace('-', ' ').replace('.html', '').split()), style = 'bold green')
 			print('\n')
+		if 'NovelHi' in data:
+			console.print('NovelHi:', style = 'bold blue')
+			for item in data['NovelHi']:
+				console.print(' '.join(elem.capitalize() for elem in item.split('/')[3].replace('-', ' ').replace('.html', '').split()), style = 'bold green')
+			print('\n')
 elif args.load_bookmark:
 	# Tested with android chrome bookmarks file
 	valid_urls = []
@@ -399,6 +443,10 @@ elif args.load_bookmark:
 					unique_urls.append(url_split[4])
 					chapters.append(url_split[5])
 					sources.append('ComradeMao')
+				elif 'novelhi' in valid_urls[i]:
+					unique_urls.append(url_split[4])
+					chapters.append(url_split[5])
+					sources.append('NovelHi')
 			if url_split[3] not in unique_urls:
 				if 'mtlnovel' in valid_urls[i]:
 					unique_urls.append(url_split[3])
@@ -439,6 +487,12 @@ elif args.load_bookmark:
 			soup = BeautifulSoup(page.content, 'html.parser')
 			detection(soup, link)
 			title = ' '.join(elem.capitalize() for elem in args.link.split('https://novelfull.com/')[1].replace('/','').replace('-',' ').replace('.html', '').split())
+		elif 'NovelHi' in sources[i]:
+			link = 'https://novelfull.com/s' + unique_urls[i] + '/' + chapters[i]
+			page = requests.get(link)
+			soup = BeautifulSoup(page.content, 'html.parser')
+			detection(soup, link)
+			console.print(' '.join(elem.capitalize() for elem in args.link.split('/')[4].replace('-', ' ').split()), style = 'bold green')
 		else:
 			splitter = chapters[i].split('-')
 			res = list(filter(lambda x: 'chapter' in x, splitter))
