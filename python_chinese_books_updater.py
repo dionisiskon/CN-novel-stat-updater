@@ -34,7 +34,20 @@ args, leftovers = parser.parse_known_args()
 # Current path
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-# Check for OS
+def detect_source(link):
+	if '69shuba' in link:
+		return '69shuba'
+	elif 'mtlnovel' in link:
+		return 'MTLNovel'
+	elif 'novelfull' in link:
+		return 'NovelFull'
+	elif 'novelhi' in link:
+		return 'NovelHi'
+	elif 'comrademao' in link:
+		return 'ComradeMao'
+	else:
+		return None
+# Check for OS 
 if os.name == 'nt':
 	# For Windows
 	path_of_file = '\cnnovels.json'
@@ -131,62 +144,30 @@ def update(source):
 			data.update(dictionary)
 			with open("cnnovels.json", "w") as jsonFile:
 				json.dump(data, jsonFile, indent = 2)
-
+				
 if args.link:
-	if '69shuba' in args.link:
-		console.print("You have inputted a 69shuba link", style='bold green')
-		page = requests.get(args.link)
-		if page.status_code == 200:
-			detection(page, args.link)
-			doesExist = os.path.exists(dir_path + path_of_file)
-			if doesExist == False:
-				create('69shuba')
-			else:
-				update('69shuba')
-			console.print('Added novel to collection list\n', style='bold green')
-	elif 'comrademao' in args.link:
-		console.print("You have inputted a comrademao link\n", style='bold green')
+	source = detect_source(args.link)
+	if source != 'MTLNovel' or source != None:
+		console.print("You have inputted a {} link".format(source), style='bold green')
 		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
-		page = requests.get(args.link, headers=headers)
+		page = requests.get(args.link, headers = headers)
 		if page.status_code == 200:
 			detection(page, args.link)
 			doesExist = os.path.exists(dir_path + path_of_file)
 			if doesExist == False:
-				create('ComradeMao')
+				create(source)
 			else:
-				update('ComradeMao')
+				update(source)
 			console.print('Added novel to collection list\n', style='bold green')
-	elif 'mtlnovel' in args.link:
+	elif source == 'MTLNovel':
 		console.print("You have inputted a MTLNovel link", style="bold green")
 		doesExist = os.path.exists(dir_path + path_of_file)
 		detection('', args.link)
 		if doesExist == False:
-			create('MTLNovel')
+			create(source)
 		else:
-			update('MTLNovel')
+			update(source)
 		console.print('Added novel to collection list\n', style='bold green')
-	elif 'novelfull' in args.link:
-		console.print("You have inputted a NovelFull link", style='bold green')
-		page = requests.get(args.link)
-		if page.status_code == 200:
-			detection(page, args.link)
-			doesExist = os.path.exists(dir_path + path_of_file)
-			if doesExist == False:
-				create('NovelFull')
-			else:
-				update('NovelFull')
-			console.print('Added novel to collection list\n', style='bold green')
-	elif 'novelhi' in args.link:
-		console.print("You have inputted a NovelBin link", style='bold green')
-		page = requests.get(args.link)
-		if page.status_code == 200:
-			detection(page, args.link)
-			doesExist = os.path.exists(dir_path + path_of_file)
-			if doesExist == False:
-				create('NovelHi')
-			else:
-				update('NovelHi')
-			console.print('Added novel to collection list\n', style='bold green')
 	else:
 		console.print("Incompatible link found!", style='bold red')
 elif args.check:
@@ -425,7 +406,7 @@ elif args.load_bookmark:
 	f = open(sys.argv[2])
 	data = json.load(f)
 	for i in data['roots']['synced']['children']:
-		if '69shuba' in i['url'] or 'comrademao' in i['url'] or 'mtlnovel' in i['url'] or 'novelfull' in i['url']:
+		if '69shuba' in i['url'] or 'comrademao' in i['url'] or 'mtlnovel' in i['url'] or 'novelfull' in i['url'] or 'novelhi' in i['url']:
 			valid_urls.append(i['url'])
 	f.close()
 	if len(valid_urls) > 0:
