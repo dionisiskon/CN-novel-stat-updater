@@ -66,7 +66,7 @@ def detection(page, link):
 		index = splitter.index('Chapter') + 1
 		chapter = re.findall(r'\d+', splitter[index])[0] 
 		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter), style='bold green')
-		args.link = 'https://www.69shuba.com/book/' + link.split('/')[4] + '.htm'
+		args.link = 'https://www.69shuba.pro/book/' + link.split('/')[4] + '.htm'
 		args.chapter = chapter
 	elif 'comrademao' in link and 'chapter' in link:
 		soup = BeautifulSoup(page.content, 'html.parser')
@@ -147,7 +147,7 @@ def update(source):
 				
 if args.link:
 	source = detect_source(args.link)
-	if source != 'MTLNovel' or source != None:
+	if source != 'MTLNovel' and source != None:
 		console.print("You have inputted a {} link".format(source), style='bold green')
 		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
 		page = requests.get(args.link, headers = headers)
@@ -444,7 +444,7 @@ elif args.load_bookmark:
 	headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
 	for i in range(len(unique_urls)):
 		if '69shuba' in sources[i]:
-			page = requests.get('https://www.69shuba.com/txt/' + unique_urls[i] + '/' + chapters[i])
+			page = requests.get('https://www.69shuba.pro/txt/' + unique_urls[i] + '/' + chapters[i])
 			soup = BeautifulSoup(page.content, 'html.parser')
 			a = soup.find_all('h1')
 			chapter = a[0].text
@@ -452,7 +452,7 @@ elif args.load_bookmark:
 			splitter = b.split(' ')
 			index = splitter.index('Chapter') + 1
 			args.chapter = re.findall(r'\d+', splitter[index])[0] 
-			args.link = 'https://www.69shuba.com/book/' + unique_urls[i] + '.htm'
+			args.link = 'https://www.69shuba.pro/book/' + unique_urls[i] + '.htm'
 		elif 'ComradeMao' in sources[i]:
 			page = requests.get('https://comrademao.com/mtl/' + unique_urls[i] + '/' + chapters[i], headers=headers)
 			soup = BeautifulSoup(page.content, 'html.parser')
