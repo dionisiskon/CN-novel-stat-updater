@@ -291,7 +291,7 @@ elif args.delete:
 	doesExist = os.path.exists(dir_path + path_of_file)
 	deleteList = []
 	category = []
-	boolToStop = True
+	boolToStop = False
 	if doesExist == True:
 		with open('cnnovels.json', 'r') as jsonFile:
 			data=json.load(jsonFile)
