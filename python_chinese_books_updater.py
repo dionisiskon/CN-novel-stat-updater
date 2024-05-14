@@ -178,12 +178,17 @@ elif args.check:
 	headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
 	with open("cnnovels.json", 'r') as jsonFile:
 		data = json.load(jsonFile)
+	boolToStop = False
 	if '69shuba' in data:
 		for link in data['69shuba']:
 			chapternum = int(data['69shuba'][link])
 			url = link.replace("/txt",'').replace('.htm','/')
-			page = requests.get(url)
-			if page.status_code == 200:
+			try:
+				page = requests.get(url)
+			except:
+				console.print('69shuba failed to be reached!\n\n', style = 'red')
+				boolToStop = True
+			if not boolToStop:
 				soup = BeautifulSoup(page.content, 'html.parser')
 				a = soup.find('div', class_ = 'mybox')
 				b = a.find_all("div")
@@ -286,6 +291,7 @@ elif args.delete:
 	doesExist = os.path.exists(dir_path + path_of_file)
 	deleteList = []
 	category = []
+	boolToStop = True
 	if doesExist == True:
 		with open('cnnovels.json', 'r') as jsonFile:
 			data=json.load(jsonFile)
@@ -293,12 +299,18 @@ elif args.delete:
 		if '69shuba' in data:
 			console.print('69shuba:', style = 'bold blue')
 			for item in data['69shuba']:
-				page = requests.get(item)
-				soup = BeautifulSoup(page.content, 'html.parser')
-				booknav2 = soup.find('div', class_ = 'booknav2')
-				h1 = booknav2.find('h1').text
-				title = translator.translate(h1).text
-				console.print(str(choiceCounter) + ' : ' + title + ' ' + item)
+				try:
+					page = requests.get(item)
+				except:
+					boolToStop = True
+				if not boolToStop:
+					soup = BeautifulSoup(page.content, 'html.parser')
+					booknav2 = soup.find('div', class_ = 'booknav2')
+					h1 = booknav2.find('h1').text
+					title = translator.translate(h1).text
+					console.print(str(choiceCounter) + ' : ' + title + ' ' + item)
+				else:
+					console.print(str(choiceCounter) + ' : ' + item)
 				choiceCounter +=1
 				deleteList.append(item)
 				category.append('69shuba')
@@ -364,6 +376,7 @@ elif args.delete:
 		console.print("\nFile doesn't exist!\n", style='bold red')
 elif args.list:
 	doesExist = os.path.exists(dir_path + path_of_file)
+	boolToStop = False
 	if doesExist == False:
 		console.print("Your novel collection list is empty!", style='bold red')
 	else:
@@ -373,13 +386,18 @@ elif args.list:
 		if '69shuba' in data:
 			console.print('69shuba:', style = 'bold blue')
 			for item in data['69shuba']:
-				page = requests.get(item)
-				soup = BeautifulSoup(page.content, 'html.parser')
-				a = soup.find('div', class_ = "booknav2")
-				title = a.find('h1').text
-				title = translator.translate(title).text
-				console.print(' '.join(elem.capitalize() for elem in title.split()) + ' ' + item, style='bold green')
-			print('\n')
+				try:
+					page = requests.get(item)
+				except:
+					console.print('69shuba failed to be reached!\n\n', style = 'red')
+					boolToStop=True
+				if not boolToStop:
+					soup = BeautifulSoup(page.content, 'html.parser')
+					a = soup.find('div', class_ = "booknav2")
+					title = a.find('h1').text
+					title = translator.translate(title).text
+					console.print(' '.join(elem.capitalize() for elem in title.split()) + ' ' + item, style='bold green')
+				print('\n')
 		if 'ComradeMao' in data:
 			console.print('ComradeMao:', style = 'bold blue')
 			for item in data['ComradeMao']:
@@ -398,7 +416,7 @@ elif args.list:
 		if 'NovelHi' in data:
 			console.print('NovelHi:', style = 'bold blue')
 			for item in data['NovelHi']:
-				console.print(' '.join(elem.capitalize() for elem in item.split('/')[3].replace('-', ' ').replace('.html', '').split()), style = 'bold green')
+				console.print(' '.join(elem.capitalize() for elem in item.split('/')[4].replace('-', ' ').replace('.html', '').split()), style = 'bold green')
 			print('\n')
 elif args.load_bookmark:
 	# Tested with android chrome bookmarks file
@@ -442,17 +460,23 @@ elif args.load_bookmark:
 		sys.exit()
 	counter = 0
 	headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+	boolToStop = False
 	for i in range(len(unique_urls)):
 		if '69shuba' in sources[i]:
-			page = requests.get('https://www.69shuba.pro/txt/' + unique_urls[i] + '/' + chapters[i])
-			soup = BeautifulSoup(page.content, 'html.parser')
-			a = soup.find_all('h1')
-			chapter = a[0].text
-			b = translator.translate(chapter).text
-			splitter = b.split(' ')
-			index = splitter.index('Chapter') + 1
-			args.chapter = re.findall(r'\d+', splitter[index])[0] 
-			args.link = 'https://www.69shuba.pro/book/' + unique_urls[i] + '.htm'
+			try:
+				page = requests.get('https://www.69shuba.pro/txt/' + unique_urls[i] + '/' + chapters[i])
+			except:
+				console.print('69shuba failed to be reached!\n\n', style='red')
+				boolToStop = True
+			if not boolToStop:
+				soup = BeautifulSoup(page.content, 'html.parser')
+				a = soup.find_all('h1')
+				chapter = a[0].text
+				b = translator.translate(chapter).text
+				splitter = b.split(' ')
+				index = splitter.index('Chapter') + 1
+				args.chapter = re.findall(r'\d+', splitter[index])[0] 
+				args.link = 'https://www.69shuba.pro/book/' + unique_urls[i] + '.htm'
 		elif 'ComradeMao' in sources[i]:
 			page = requests.get('https://comrademao.com/mtl/' + unique_urls[i] + '/' + chapters[i], headers=headers)
 			soup = BeautifulSoup(page.content, 'html.parser')
