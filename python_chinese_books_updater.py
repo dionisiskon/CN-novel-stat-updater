@@ -149,7 +149,7 @@ if args.link:
 	source = detect_source(args.link)
 	if source != 'MTLNovel' and source != None:
 		console.print("You have inputted a {} link".format(source), style='bold green')
-		headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+		headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0'}
 		page = requests.get(args.link, headers = headers)
 		if page.status_code == 200:
 			detection(page, args.link)
@@ -175,7 +175,7 @@ elif args.check:
 	if doesExist == False:
 		console.print("You can't check when a file doesn't exist! Try again with a valid argument!\n", style='bold red')
 		sys.exit()
-	headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+	headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0'}
 	with open("cnnovels.json", 'r') as jsonFile:
 		data = json.load(jsonFile)
 	boolToStop = False
@@ -184,7 +184,7 @@ elif args.check:
 			chapternum = int(data['69shuba'][link])
 			url = link.replace("/txt",'').replace('.htm','/')
 			try:
-				page = requests.get(url)
+				page = requests.get(url, headers=headers)
 			except:
 				console.print('69shuba failed to be reached!\n\n', style = 'red')
 				boolToStop = True
@@ -292,6 +292,7 @@ elif args.delete:
 	deleteList = []
 	category = []
 	boolToStop = False
+	headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0'}
 	if doesExist == True:
 		with open('cnnovels.json', 'r') as jsonFile:
 			data=json.load(jsonFile)
@@ -300,7 +301,7 @@ elif args.delete:
 			console.print('69shuba:', style = 'bold blue')
 			for item in data['69shuba']:
 				try:
-					page = requests.get(item)
+					page = requests.get(item, headers=headers)
 				except:
 					boolToStop = True
 				if not boolToStop:
@@ -377,6 +378,7 @@ elif args.delete:
 elif args.list:
 	doesExist = os.path.exists(dir_path + path_of_file)
 	boolToStop = False
+	headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0'}
 	if doesExist == False:
 		console.print("Your novel collection list is empty!", style='bold red')
 	else:
@@ -387,7 +389,7 @@ elif args.list:
 			console.print('69shuba:', style = 'bold blue')
 			for item in data['69shuba']:
 				try:
-					page = requests.get(item)
+					page = requests.get(item, headers=headers)
 				except:
 					console.print('69shuba failed to be reached!\n\n', style = 'red')
 					boolToStop=True
@@ -459,12 +461,12 @@ elif args.load_bookmark:
 		console.print('No valid links inside bookmark file!', style='bold red')
 		sys.exit()
 	counter = 0
-	headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+	headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0'}
 	boolToStop = False
 	for i in range(len(unique_urls)):
 		if '69shuba' in sources[i]:
 			try:
-				page = requests.get('https://www.69shuba.pro/txt/' + unique_urls[i] + '/' + chapters[i])
+				page = requests.get('https://www.69shuba.pro/txt/' + unique_urls[i] + '/' + chapters[i], headers=headers)
 			except:
 				console.print('69shuba failed to be reached!\n\n', style='red')
 				boolToStop = True
