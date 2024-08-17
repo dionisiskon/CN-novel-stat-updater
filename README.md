@@ -10,10 +10,11 @@ This python script helps in keeping stats of your favorite novels from the chine
 - GoogleTrans (pip install googletrans==3.1.0a0)
 - Selenium for MTLNovel (pip install selenium)
 - Webdriver Manager for MTLNovel (pip install webdriver-manager)
-- re (pip install re)
+
 
 Of course, python3 is needed. The forementioned packages can be installed using 'python3 -m pip install ...' or 'pip3 install ...' 
 
+You can install the whole bunch directly using the "pip install -r requirements.txt" command!
 ## Currently supported
 
  - Comrademao
