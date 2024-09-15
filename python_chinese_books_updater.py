@@ -423,7 +423,7 @@ elif args.list:
 elif args.load_bookmark:
 	# Tested with android chrome bookmarks file
 	valid_urls = []
-	f = open(sys.argv[2])
+	f = open(sys.argv[2], encoding = 'utf-8')
 	data = json.load(f)
 	for i in data['roots']['synced']['children']:
 		if '69shuba' in i['url'] or 'comrademao' in i['url'] or 'mtlnovel' in i['url'] or 'novelfull' in i['url'] or 'novelhi' in i['url']:
@@ -440,10 +440,10 @@ elif args.load_bookmark:
 					unique_urls.append(url_split[4])
 					chapters.append(url_split[5])
 					sources.append('69shuba')
-				elif 'comrademao' in valid_urls[i]:
-					unique_urls.append(url_split[4])
-					chapters.append(url_split[5])
-					sources.append('ComradeMao')
+				# elif 'comrademao' in valid_urls[i]:
+				# 	unique_urls.append(url_split[4])
+				# 	chapters.append(url_split[5])
+				# 	sources.append('ComradeMao')
 				elif 'novelhi' in valid_urls[i]:
 					unique_urls.append(url_split[4])
 					chapters.append(url_split[5])
@@ -479,15 +479,15 @@ elif args.load_bookmark:
 				index = splitter.index('Chapter') + 1
 				args.chapter = re.findall(r'\d+', splitter[index])[0] 
 				args.link = 'https://www.69shuba.pro/book/' + unique_urls[i] + '.htm'
-		elif 'ComradeMao' in sources[i]:
-			page = requests.get('https://comrademao.com/mtl/' + unique_urls[i] + '/' + chapters[i], headers=headers)
-			soup = BeautifulSoup(page.content, 'html.parser')
-			a = soup.find_all('h3')[0].text
-			b = translator.translate(a).text
-			c = b.split(' ')
-			chapter = re.findall(r'\d+', c[-1])[0] 
-			args.chapter = chapter
-			args.link = 'https://comrademao.com/novel/' + unique_urls[i]
+		# elif 'ComradeMao' in sources[i]:
+		# 	page = requests.get('https://comrademao.com/mtl/' + unique_urls[i] + '/' + chapters[i], headers=headers)
+		# 	soup = BeautifulSoup(page.content, 'html.parser')
+		# 	a = soup.find_all('h3')[0].text
+		# 	b = translator.translate(a).text
+		# 	c = b.split(' ')
+		# 	chapter = re.findall(r'\d+', c[-1])[0] 
+		# 	args.chapter = chapter
+		# 	args.link = 'https://comrademao.com/novel/' + unique_urls[i]
 		elif 'NovelFull' in sources[i]:
 			link = 'https://novelfull.com/' + unique_urls[i] + '/' + chapters[i]
 			page = requests.get(link)
