@@ -465,12 +465,12 @@ elif args.stats:
 		for item in sources:
 			if item in data:
 				for link in data[item]:
-					links_and_nums.append(link + ', ' + data[item][link])
+					links_and_nums.append(link + 'chapterchapter123' + data[item][link][1])
 					count +=1
 		console.print('\nYour total number of novels in your inventory are: ' + str(count) + '\n')
 		console.print('The following are the novels you have stored: \n')
 		for item in links_and_nums:
-			console.print(item.split(',')[0], style = 'bold blue')
+			console.print(item.partition('chapterchapter123')[0] + ' : ' + item.partition('chapterchapter123')[2] , style = 'bold blue')
 else:
 	console.print("No argument was inserted. Please try executing the script again in the proper format!\n", style = 'bold red')
 
