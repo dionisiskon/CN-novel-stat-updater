@@ -16,6 +16,8 @@ from time import sleep
 from googletrans import Translator
 import sys
 import re
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Arguments and console/translator
 translator = Translator()
@@ -28,25 +30,27 @@ parser.add_argument('--chapter', help="Chapter number specification")
 parser.add_argument('--check', help="Checking novel chapters progress")
 parser.add_argument('--delete', help="Delete novel from database")
 parser.add_argument('--list', help = 'List all novels that are currently inside the user\'s database')
-parser.add_argument('--load_bookmark', help = 'Load the bookmark file extractred from a browser')
+parser.add_argument('--bookmarks', help = 'Load the bookmark file extractred from a browser')
+parser.add_argument('--stats', help = 'Check out information about your saved data')
 args, leftovers = parser.parse_known_args()
 
 # Current path
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-def detect_source(link):
-	if '69shuba' in link:
-		return '69shuba'
-	elif 'mtlnovel' in link:
-		return 'MTLNovel'
-	elif 'novelfull' in link:
-		return 'NovelFull'
-	elif 'novelhi' in link:
-		return 'NovelHi'
-	elif 'comrademao' in link:
-		return 'ComradeMao'
-	else:
-		return None
+def detect_source(url):
+
+    sources = {
+        '69shuba': '69shuba',
+        'mtlnovel': 'MTLNovel',
+        'novelfull': 'NovelFull',
+        'novelhi': 'NovelHi',
+        'comrademao': 'ComradeMao',
+    }
+    for source, pattern in set(sources.items()):
+        if source in url:
+            return pattern
+    return None
+
 # Check for OS 
 if os.name == 'nt':
 	# For Windows
@@ -66,17 +70,19 @@ def detection(page, link):
 		index = splitter.index('Chapter') + 1
 		chapter = re.findall(r'\d+', splitter[index])[0] 
 		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter), style='bold green')
-		args.link = 'https://www.69shuba.pro/book/' + link.split('/')[4] + '.htm'
+		args.link = 'https://www.69shuba.cx/book/' + link.split('/')[4] + '.htm'
+		c = soup.find('h3', class_ = 'mytitle hide720').find('div').find_all('a')[-1]
+		args.title = translator.translate(c.text).text
 		args.chapter = chapter
-	elif 'comrademao' in link and 'chapter' in link:
-		soup = BeautifulSoup(page.content, 'html.parser')
-		a = soup.find_all('h3')[0].text
-		b = translator.translate(a).text
-		c = b.split(' ')
-		chapter = re.findall(r'\d+', c[-1])[0] 
-		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter), style='bold green')
-		args.link = 'https://comrademao.com/novel/' + link.split('/')[-3]
-		args.chapter = chapter
+	# elif 'comrademao' in link and 'chapter' in link:
+	# 	soup = BeautifulSoup(page.content, 'html.parser')
+	# 	a = soup.find_all('h3')[0].text
+	# 	b = translator.translate(a).text
+	# 	c = b.split(' ')
+	# 	chapter = re.findall(r'\d+', c[-1])[0] 
+	# 	console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter), style='bold green')
+	# 	args.link = 'https://comrademao.com/novel/' + link.split('/')[-3]
+	# 	args.chapter = chapter
 	elif 'novelfull' in link and 'chapter' in link:
 		splitter = link.split('-')
 		res = list(filter(lambda x: 'chapter' in x, splitter))
@@ -84,6 +90,8 @@ def detection(page, link):
 		chapter = re.findall(r'\d+', splitter[index])[0] 
 		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter), style='bold green')
 		args.chapter = chapter
+		title = ' '.join(elem.capitalize() for elem in args.link.split('https://novelfull.com/')[1].replace('/','').replace('-',' ').replace('.html', '').split())
+		args.title = title.partition("chapter")[0]
 		args.link = 'https://novelfull.com/' + link.split('/')[-2] + '.html'
 	elif 'mtlnovel' in link and 'chapter' in link:
 		splitter = link.split('-')
@@ -92,22 +100,25 @@ def detection(page, link):
 		chapter = re.findall(r'\d+', splitter[index])[0] 
 		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter), style='bold green')
 		args.chapter = chapter
+		a = ' '.join(elem.capitalize() for elem in args.link.split('https://www.mtlnovels.com/')[1].replace('/','').replace('-',' ').replace('.html', '').split())
+		args.title = a.partition('chapter')[0]
 		args.link = 'https://www.mtlnovel.com/' + link.split('/')[-3]
 	elif 'novelhi' in link and link.split('/')[5]:
 		args.chapter = link.split('/')[5]
 		args.link = 'https://novelhi.com/s/' + link.split('/')[4]
+		args.title = ' '.join(elem.capitalize() for elem in args.link.split('https://novelhi.com/s/')[1].replace('/','').replace('-',' ').replace('.html', '').split())
 		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(args.chapter), style='bold green')
 	else:
 		console.print('\nNo chapter information could be extracted. Setting chapter as 1 in the json file...\n', style='blue')
 # Function to create a file
-def create(source):
+def create(source):	
 	if args.chapter is not None:
-		dict1 = {args.link : args.chapter}
+		dict1 = {args.title : [args.link, args.chapter]}
 		dictionary = {source : dict1}
 		with open("cnnovels.json", "w") as jsonFile:
 			json.dump(dictionary, jsonFile, indent = 2)
 	else:
-		dict1 = {args.link : '1'}
+		dict1 = {args.title : [args.link, '1']}
 		dictionary = {source : dict1}
 		with open("cnnovels.json", 'w') as jsonFile:
 			json.dump(dictionary, jsonFile, indent = 2)
@@ -124,7 +135,7 @@ def update(source):
 		else:
 			with open("cnnovels.json", 'r') as jsonFile:
 				data = json.load(jsonFile)
-			dict1 = {args.link : args.chapter}
+			dict1 = {args.title : [args.link, args.chapter]}
 			dictionary = {source : dict1}
 			data.update(dictionary)
 			with open("cnnovels.json", "w") as jsonFile:
@@ -139,7 +150,7 @@ def update(source):
 		else:
 			with open("cnnovels.json", 'r') as jsonFile:
 				data = json.load(jsonFile)
-			dict1 = {args.link : '1'}
+			dict1 = {args.title : [args.link,'1']}
 			dictionary = {source : dict1}
 			data.update(dictionary)
 			with open("cnnovels.json", "w") as jsonFile:
@@ -147,10 +158,11 @@ def update(source):
 				
 if args.link:
 	source = detect_source(args.link)
+	print(source)
 	if source != 'MTLNovel' and source != None:
 		console.print("You have inputted a {} link".format(source), style='bold green')
 		headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0'}
-		page = requests.get(args.link, headers = headers)
+		page = requests.get(args.link, headers = headers, verify = False)
 		if page.status_code == 200:
 			detection(page, args.link)
 			doesExist = os.path.exists(dir_path + path_of_file)
@@ -181,8 +193,8 @@ elif args.check:
 	boolToStop = False
 	if '69shuba' in data:
 		for link in data['69shuba']:
-			chapternum = int(data['69shuba'][link])
-			url = link.replace("/txt",'').replace('.htm','/')
+			chapternum = int(data['69shuba'][link][1])
+			url = data['69shuba'][link][0].replace("/txt",'').replace('.htm','/')
 			try:
 				page = requests.get(url, headers=headers)
 			except:
@@ -204,12 +216,12 @@ elif args.check:
 					console.print("You are on the latest chapter. Come back and check again for new updates!\n")
 				else:
 					console.print("Current chapter: {}\n".format(chapternum))
-					console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(len(d) - chapternum, link))
+					console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(len(d) - chapternum, data['69shuba'][link][0]))
 				sleep(2)
 	if 'ComradeMao' in data:
 		for link in data['ComradeMao']:
-			chapternum = int(data['ComradeMao'][link])
-			page = requests.get(link, headers=headers)
+			chapternum = int(data['ComradeMao'][link][1])
+			page = requests.get(data['ComradeMao'][link][0], headers=headers)
 			if page.status_code == 200:
 				soup = BeautifulSoup(page.content, 'html.parser')
 				a = soup.find('div', class_ = 'eplister')
@@ -223,12 +235,12 @@ elif args.check:
 					console.print("You are on the latest chapter. Come back and check again for new updates!\n")
 				else:
 					console.print("Current chapter: {}\n".format(chapternum))
-					console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(len(c) - chapternum, link))
+					console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(len(c) - chapternum, data['ComradeMao'][link][0]))
 			sleep(2)
 	if 'NovelFull' in data:
 		for link in data['NovelFull']:
-			chapternum = int(data['NovelFull'][link])
-			page = requests.get(link)
+			chapternum = int(data['NovelFull'][link][1])
+			page = requests.get(data['NovelFull'][link][0])
 			if page.status_code == 200:
 				soup = BeautifulSoup(page.content, 'html.parser')
 				a = soup.find('ul', class_ = 'l-chapters')
@@ -241,11 +253,11 @@ elif args.check:
 					console.print("You are on the latest chapter. Come back and check again for new updates!\n")
 				else:
 					console.print("Current chapter: {}\n".format(chapternum))
-					console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(int(c) - chapternum, link))
+					console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(int(c) - chapternum, data['NovelFull'][link][0]))
 	if 'NovelHi' in data:
 		for link in data['NovelHi']:
-			chapternum = int(data['NovelHi'][link])
-			chapterpage = 'https://novelhi.com/s/index/' + link.split('/')[4]
+			chapternum = int(data['NovelHi'][link][1])
+			chapterpage = 'https://novelhi.com/s/index/' + data['NovelHi'][link][0].split('/')[4]
 			page = requests.get(chapterpage)
 			if page.status_code == 200:
 				soup = BeautifulSoup(page.content, 'html.parser')
@@ -257,7 +269,7 @@ elif args.check:
 					console.print("You are on the latest chapter. Come back and check again for new updates!\n")
 				else:
 					console.print("Current chapter: {}\n".format(chapternum))
-					console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(int(chapter) - chapternum, link))
+					console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(int(chapter) - chapternum, data['NovelHi'][link][0]))
 	if 'MTLNovel' in data:
 		from selenium import webdriver
 		from webdriver_manager.chrome import ChromeDriverManager
@@ -270,11 +282,11 @@ elif args.check:
 		options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 OPR/91.0.4516.72")
 		for link in data['MTLNovel']:
 			driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-			chapternum = int(data['MTLNovel'][link])
-			if link.endswith('/'):
-				url = link + 'chapter-list/'
+			chapternum = int(data['MTLNovel'][link][1])
+			if data['MTLNovel'][link][0].endswith('/'):
+				url = data['MTLNovel'][link][0] + 'chapter-list/'
 			else:
-				url = link + '/chapter-list/'
+				url = data['MTLNovel'][link][0] + '/chapter-list/'
 			page = driver.get(url)
 			b = driver.find_elements("xpath", "//html/body/main/article/div/div[2]/div[3]/p/a")
 			title = driver.find_element("xpath", "//html/body/main/article/div/div[2]/div[1]/h1").text
@@ -283,7 +295,7 @@ elif args.check:
 				console.print("You are on the latest chapter. Come back and check again for new updates!\n")
 			else:
 				console.print("Current chapter: {}\n".format(chapternum))
-				console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(len(b) - chapternum, link))
+				console.print("There are {} chapters you haven't read yet. You can visit the website at {} to read them now!\n".format(len(b) - chapternum, data['MTLNovel'][link][0]))
 			driver.quit()
 elif args.delete:
 	choiceCounter = 1
@@ -297,57 +309,14 @@ elif args.delete:
 		with open('cnnovels.json', 'r') as jsonFile:
 			data=json.load(jsonFile)
 		console.print('You currently have these novels in your json file:\n')
-		if '69shuba' in data:
-			console.print('69shuba:', style = 'bold blue')
-			for item in data['69shuba']:
-				try:
-					page = requests.get(item, headers=headers)
-				except:
-					boolToStop = True
-				if not boolToStop:
-					soup = BeautifulSoup(page.content, 'html.parser')
-					booknav2 = soup.find('div', class_ = 'booknav2')
-					h1 = booknav2.find('h1').text
-					title = translator.translate(h1).text
-					console.print(str(choiceCounter) + ' : ' + title + ' ' + item)
-				else:
-					console.print(str(choiceCounter) + ' : ' + item)
-				choiceCounter +=1
-				deleteList.append(item)
-				category.append('69shuba')
-			print('\n')
-		if 'ComradeMao' in data:
-			console.print('ComradeMao:', style = 'bold blue')
-			for item in data['ComradeMao']:
-				console.print(str(choiceCounter) + ': ' + ' '.join(elem.capitalize() for elem in item.split('novel/')[1].replace('/','').replace('-',' ').split()) + ' ' + item)
-				choiceCounter +=1
-				deleteList.append(item)
-				category.append('ComradeMao')
-			print('\n')
-		if 'MTLNovel' in data:
-			console.print('MTLNovel:', style = 'bold blue')
-			for item in data['MTLNovel']:
-				console.print(str(choiceCounter) + ': ' + ' '.join(elem.capitalize() for elem in item.split('/')[3].replace('-', ' ').split()) + ' ' + item)
-				choiceCounter +=1
-				deleteList.append(item)
-				category.append('MTLNovel')
-			print('\n')
-		if 'NovelFull' in data:
-			console.print('NovelFull:', style = 'bold blue')
-			for item in data['NovelFull']:
-				console.print(str(choiceCounter) + ': ' + ' '.join(elem.capitalize() for elem in item.split('/')[3].replace('-', ' ').replace('.html', '').split()) + ' ' + item)
-				choiceCounter +=1
-				deleteList.append(item)
-				category.append('NovelFull')
-			print('\n')
-		if 'NovelHi' in data:
-			console.print('NovelHi:', style = 'bold blue')
-			for item in data['NovelHi']:
-				console.print(str(choiceCounter) + ': ' + ' '.join(elem.capitalize() for elem in item.split('/')[4].replace('-', ' ').replace('.html', '').split()) + ' ' + item)
-				choiceCounter +=1
-				deleteList.append(item)
-				category.append('NovelHi')
-			print('\n')
+		for category_name, category_data in data.items():
+			console.print(category_name + ':', style='bold blue')
+			for i, (title, link) in enumerate(category_data.items()):
+				console.print(f'{choiceCounter} : {title}')
+				choiceCounter += 1
+				deleteList.append(link)
+				category.append(category_name)
+		print('\n')
 		console.print(str(choiceCounter) + ': ' + 'Delete all')
 		choiceCounter += 1
 		choices = list(map(int, input('Please select your choice\n').split(',')))
@@ -385,42 +354,12 @@ elif args.list:
 		with open('cnnovels.json', 'r') as jsonFile:
 			data=json.load(jsonFile)
 		console.print('You currently have these novels in your json file:\n')
-		if '69shuba' in data:
-			console.print('69shuba:', style = 'bold blue')
-			for item in data['69shuba']:
-				try:
-					page = requests.get(item, headers=headers)
-				except:
-					console.print('69shuba failed to be reached!\n\n', style = 'red')
-					boolToStop=True
-				if not boolToStop:
-					soup = BeautifulSoup(page.content, 'html.parser')
-					a = soup.find('div', class_ = "booknav2")
-					title = a.find('h1').text
-					title = translator.translate(title).text
-					console.print(' '.join(elem.capitalize() for elem in title.split()) + ' ' + item, style='bold green')
-				print('\n')
-		if 'ComradeMao' in data:
-			console.print('ComradeMao:', style = 'bold blue')
-			for item in data['ComradeMao']:
-				console.print(' '.join(elem.capitalize() for elem in item.split('novel/')[1].replace('/','').replace('-',' ').split()) + ' ' + item, style='bold green')
-			print('\n')
-		if 'MTLNovel' in data:
-			console.print('MTLNovel:', style = 'bold blue')
-			for item in data['MTLNovel']:
-				console.print(' '.join(elem.capitalize() for elem in item.split('/')[3].replace('-', ' ').split()) + ' ' + item, style='bold green')
-			print('\n')
-		if 'NovelFull' in data:
-			console.print('NovelFull:', style = 'bold blue')
-			for item in data['NovelFull']:
-				console.print(' '.join(elem.capitalize() for elem in item.split('/')[3].replace('-', ' ').replace('.html', '').split()), style = 'bold green')
-			print('\n')
-		if 'NovelHi' in data:
-			console.print('NovelHi:', style = 'bold blue')
-			for item in data['NovelHi']:
-				console.print(' '.join(elem.capitalize() for elem in item.split('/')[4].replace('-', ' ').replace('.html', '').split()), style = 'bold green')
-			print('\n')
-elif args.load_bookmark:
+		for source, novels in data.items():
+			console.print(source + ':', style='bold blue')
+			for novel in novels:
+				console.print(novel, style='bold green')
+			console.print()
+elif args.bookmarks:
 	# Tested with android chrome bookmarks file
 	valid_urls = []
 	f = open(sys.argv[2], encoding = 'utf-8')
@@ -513,5 +452,24 @@ elif args.load_bookmark:
 			update(sources[i])
 		counter +=1
 		console.print('Added {} novel to collection list'.format(str(counter)), style = 'bold green')
+elif args.stats:
+	doesExist = os.path.exists(dir_path + path_of_file)
+	if doesExist == False:
+		console.print("Your novel collection list is empty!", style='bold red')
+	else:
+		with open('cnnovels.json', 'r') as jsonFile:
+			data=json.load(jsonFile)
+		count = 0
+		sources = ['NovelHi', 'NovelFull', '69shuba', 'MTLNovel']
+		links_and_nums = []
+		for item in sources:
+			if item in data:
+				for link in data[item]:
+					links_and_nums.append(link + ', ' + data[item][link])
+					count +=1
+		console.print('\nYour total number of novels in your inventory are: ' + str(count) + '\n')
+		console.print('The following are the novels you have stored: \n')
+		for item in links_and_nums:
+			console.print(item.split(',')[0], style = 'bold blue')
 else:
 	console.print("No argument was inserted. Please try executing the script again in the proper format!\n", style = 'bold red')
