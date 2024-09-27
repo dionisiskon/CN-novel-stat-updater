@@ -66,11 +66,17 @@ example:
 
   > python3 python_chinese_books_updater.py --list y
 
-#### --load_bookmark: Loading bookmark file (tested with android Chrome)
+#### --bookmarks: Loading bookmark file (tested with android Chrome)
 
 example:
 
-  > python3 python_chinese_books_updater.py --load_bookmark Bookmarks.json
+  > python3 python_chinese_books_updater.py --bookmarks Bookmarks.json
+
+#### --stats: Check your stats (Names of novels and Current chapters!)
+
+example:
+
+  > python3 python_chinese_books_updater.py --stats y
 
 ## Screenshots
 
