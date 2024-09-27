@@ -102,7 +102,7 @@ def detection(page, link):
 		args.chapter = chapter
 		a = ' '.join(elem.capitalize() for elem in args.link.split('https://www.mtlnovels.com/')[1].replace('/','').replace('-',' ').replace('.html', '').split())
 		args.title = a.partition('chapter')[0]
-		args.link = 'https://www.mtlnovel.com/' + link.split('/')[-3]
+		args.link = 'https://www.mtlnovels.com/' + link.split('/')[-3]
 	elif 'novelhi' in link and link.split('/')[5]:
 		args.chapter = link.split('/')[5]
 		args.link = 'https://novelhi.com/s/' + link.split('/')[4]
@@ -444,7 +444,7 @@ elif args.bookmarks:
 			res = list(filter(lambda x: 'chapter' in x, splitter))
 			index = splitter.index(res[-1]) + 1
 			args.chapter = re.findall(r'\d+', splitter[index])[0] 
-			args.link = 'https://www.mtlnovel.com/' + unique_urls[i]
+			args.link = 'https://www.mtlnovels.com/' + unique_urls[i]
 		doesExist = os.path.exists(dir_path + path_of_file)
 		if doesExist == False:
 			create(sources[i])
@@ -473,3 +473,6 @@ elif args.stats:
 			console.print(item.split(',')[0], style = 'bold blue')
 else:
 	console.print("No argument was inserted. Please try executing the script again in the proper format!\n", style = 'bold red')
+
+
+
