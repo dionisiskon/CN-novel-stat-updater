@@ -62,7 +62,7 @@ else:
 def detection(page, link):
 	console.print('\nSearching for chapter information automatically...', style='bold green')
 	if '69shuba' in link and 'txt' in link:
-		soup = BeautifulSoup(page.content, 'html.parser')
+		soup = BeautifulSoup(page.content.decode('gbk', 'ignore'), 'html.parser')
 		a = soup.find_all('h1')
 		chapter = a[0].text
 		b = translator.translate(chapter).text
@@ -72,6 +72,8 @@ def detection(page, link):
 		console.print('\nChapter information found! Inserting {} as chapter...\n'.format(chapter), style='bold green')
 		args.link = 'https://www.69shuba.cx/book/' + link.split('/')[4] + '.htm'
 		c = soup.find('h3', class_ = 'mytitle hide720').find('div').find_all('a')[-1]
+		if not '/book/' in c['href']:
+			c = soup.find('h3', class_ = 'mytitle hide720').find('div').find_all('a')[-2]
 		args.title = translator.translate(c.text).text
 		args.chapter = chapter
 	# elif 'comrademao' in link and 'chapter' in link:
@@ -111,50 +113,20 @@ def detection(page, link):
 	else:
 		console.print('\nNo chapter information could be extracted. Setting chapter as 1 in the json file...\n', style='blue')
 # Function to create a file
-def create(source):	
-	if args.chapter is not None:
-		dict1 = {args.title : [args.link, args.chapter]}
-		dictionary = {source : dict1}
-		with open("cnnovels.json", "w") as jsonFile:
-			json.dump(dictionary, jsonFile, indent = 2)
-	else:
-		dict1 = {args.title : [args.link, '1']}
-		dictionary = {source : dict1}
-		with open("cnnovels.json", 'w') as jsonFile:
-			json.dump(dictionary, jsonFile, indent = 2)
+def create(source):
+	dict1 = {args.title: [args.link, args.chapter or '1']}
+	dictionary = {source: dict1}
+	with open("cnnovels.json", "w") as jsonFile:
+		json.dump(dictionary, jsonFile, indent=2)
 
-# Function to add to an existing file
 def update(source):
-	if args.chapter is not None:
-		with open("cnnovels.json", 'r') as jsonFile:
-			data = json.load(jsonFile)
-		if source in data:
-			data[source][args.link] = args.chapter				
-			with open("cnnovels.json", 'w') as jsonFile:
-				json.dump(data, jsonFile, indent = 2)
-		else:
-			with open("cnnovels.json", 'r') as jsonFile:
-				data = json.load(jsonFile)
-			dict1 = {args.title : [args.link, args.chapter]}
-			dictionary = {source : dict1}
-			data.update(dictionary)
-			with open("cnnovels.json", "w") as jsonFile:
-				json.dump(data, jsonFile, indent = 2)
-	else:
-		with open("cnnovels.json", 'r') as jsonFile:
-			data = json.load(jsonFile)
-		if source in data:
-			data[source][args.link] = '1'			
-			with open("cnnovels.json", 'w') as jsonFile:
-				json.dump(data, jsonFile, indent = 2)
-		else:
-			with open("cnnovels.json", 'r') as jsonFile:
-				data = json.load(jsonFile)
-			dict1 = {args.title : [args.link,'1']}
-			dictionary = {source : dict1}
-			data.update(dictionary)
-			with open("cnnovels.json", "w") as jsonFile:
-				json.dump(data, jsonFile, indent = 2)
+	with open("cnnovels.json", 'r') as jsonFile:
+		data = json.load(jsonFile)
+	if source not in data:
+		data[source] = {}
+	data[source][args.title] = [args.link, args.chapter or '1']
+	with open("cnnovels.json", "w") as jsonFile:
+		json.dump(data, jsonFile, indent=2)
 				
 if args.link:
 	source = detect_source(args.link)
@@ -405,19 +377,12 @@ elif args.bookmarks:
 	for i in range(len(unique_urls)):
 		if '69shuba' in sources[i]:
 			try:
-				page = requests.get('https://www.69shuba.pro/txt/' + unique_urls[i] + '/' + chapters[i], headers=headers)
+				page = requests.get('https://www.69shuba.cx/txt/' + unique_urls[i] + '/' + chapters[i], headers=headers)
 			except:
 				console.print('69shuba failed to be reached!\n\n', style='red')
 				boolToStop = True
 			if not boolToStop:
-				soup = BeautifulSoup(page.content, 'html.parser')
-				a = soup.find_all('h1')
-				chapter = a[0].text
-				b = translator.translate(chapter).text
-				splitter = b.split(' ')
-				index = splitter.index('Chapter') + 1
-				args.chapter = re.findall(r'\d+', splitter[index])[0] 
-				args.link = 'https://www.69shuba.pro/book/' + unique_urls[i] + '.htm'
+				detection(page, 'https://www.69shuba.cx/txt/' + unique_urls[i] + '/' + chapters[i])
 		# elif 'ComradeMao' in sources[i]:
 		# 	page = requests.get('https://comrademao.com/mtl/' + unique_urls[i] + '/' + chapters[i], headers=headers)
 		# 	soup = BeautifulSoup(page.content, 'html.parser')
@@ -430,14 +395,12 @@ elif args.bookmarks:
 		elif 'NovelFull' in sources[i]:
 			link = 'https://novelfull.com/' + unique_urls[i] + '/' + chapters[i]
 			page = requests.get(link)
-			soup = BeautifulSoup(page.content, 'html.parser')
-			detection(soup, link)
+			detection(page, link)
 			title = ' '.join(elem.capitalize() for elem in args.link.split('https://novelfull.com/')[1].replace('/','').replace('-',' ').replace('.html', '').split())
 		elif 'NovelHi' in sources[i]:
 			link = 'https://novelfull.com/s' + unique_urls[i] + '/' + chapters[i]
 			page = requests.get(link)
-			soup = BeautifulSoup(page.content, 'html.parser')
-			detection(soup, link)
+			detection(page, link)
 			console.print(' '.join(elem.capitalize() for elem in args.link.split('/')[4].replace('-', ' ').split()), style = 'bold green')
 		else:
 			splitter = chapters[i].split('-')
@@ -445,6 +408,8 @@ elif args.bookmarks:
 			index = splitter.index(res[-1]) + 1
 			args.chapter = re.findall(r'\d+', splitter[index])[0] 
 			args.link = 'https://www.mtlnovels.com/' + unique_urls[i]
+			a = ' '.join(elem.capitalize() for elem in args.link.split('https://www.mtlnovels.com/')[1].replace('/','').replace('-',' ').replace('.html', '').split())
+			args.title = a.partition('chapter')[0]
 		doesExist = os.path.exists(dir_path + path_of_file)
 		if doesExist == False:
 			create(sources[i])
